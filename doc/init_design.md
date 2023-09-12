@@ -115,5 +115,13 @@ if exists:
     print player
 ```
 
+## Project Flow
+1. Validate File argument
+2. Validate options (should be 1) as well as the optional arguments
+3. Create hashtables
+4. Parse the file and populate hashtables
+5. Based on command option, call option-specific print function
+6. Clean memory and close file
+7. Exit 
 
 
