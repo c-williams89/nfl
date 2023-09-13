@@ -25,7 +25,7 @@ typedef struct team_t {
 static team_t * team_create(char * curr_team) {
         team_t *team = calloc(1, sizeof(*team));
         team->year = strsep(&curr_team, ",");
-        team->team_name = strsep(&curr_team, "\t\n");
+        team->team_name = strsep(&curr_team, "\t");
         return team; 
 }
 
@@ -37,19 +37,7 @@ player_t * player_create(char *current) {
                 errno = 0;
                 goto EXIT;
         }
-
-        // char *fields[] = {
-        //         player->id,
-        //         player->name,
-        //         player->position,
-        //         player->birthday,
-        //         player->college,
-        // };
-
-        // for (int i = 0; i < 5; ++i) {
-        //         fields[i] = strsep(&current, "\t");
-        // }
-
+        
         player->id = strsep(&current, "\t");
         player->name = strsep(&current, "\t");
         player->position = strsep(&current, "\t");
@@ -63,13 +51,13 @@ player_t * player_create(char *current) {
         while (curr_team) {
                 team_t *team = team_create(curr_team);
                 llist_enqueue(player->teams, team);
-                // printf("%s %s,", team->year, team->team_name);
                 curr_team = strsep(&current, "\t");
         }
         while (!llist_is_empty(player->teams)) {
                 team_t *curr_team = (team_t *)llist_dequeue(player->teams);
                 printf("%s, %s\n", curr_team->year, curr_team->team_name);
         }
+        // Will need peek function to add teams to team hashtable
         printf("\n");
         
 EXIT:

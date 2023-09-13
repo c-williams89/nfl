@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "../include/hashtable.h"
 #include "../include/io_helper.h"
@@ -36,9 +37,12 @@ int main (void) {
         for (uint16_t entry = 0; entry < num_entries; ++entry) {
                 char *curr_entry = NULL;
                 size_t len = 0;
+                // for entry 1, \n is at position 60;
                 getline(&curr_entry, &len, fp);
+                curr_entry[strcspn(curr_entry, "\n")] = '\0';
                 player_create(curr_entry);
         }
+// First entry 61 chars
 
         // char *curr_entry = NULL;
         // size_t len = 0;
