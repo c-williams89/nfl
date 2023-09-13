@@ -29,7 +29,7 @@ static team_t * team_create(char * curr_team) {
         return team; 
 }
 
-int player_create(char *current) {
+player_t * player_create(char *current) {
         
         player_t *player = calloc(1, sizeof(*player));
         if (!player) {
@@ -59,11 +59,16 @@ int player_create(char *current) {
 
         char *curr_team = NULL;
         curr_team = strsep(&current, "\t");
+        player->teams = llist_create();
         while (curr_team) {
                 team_t *team = team_create(curr_team);
-                printf("%s %s,", team->year, team->team_name);
-
+                llist_enqueue(player->teams, team);
+                // printf("%s %s,", team->year, team->team_name);
                 curr_team = strsep(&current, "\t");
+        }
+        while (!llist_is_empty(player->teams)) {
+                team_t *curr_team = (team_t *)llist_dequeue(player->teams);
+                printf("%s, %s\n", curr_team->year, curr_team->team_name);
         }
         printf("\n");
         

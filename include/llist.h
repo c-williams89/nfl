@@ -7,6 +7,7 @@
 	void *llist_dequeue(llist_t * list);
 	bool llist_push(llist_t * list, void *data);
 	void *llist_pop(llist_t * list);
+	bool llist_is_empty(llist_t * llist);
 #endif
 
 
