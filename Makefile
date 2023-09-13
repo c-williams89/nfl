@@ -28,7 +28,7 @@ BIN := nfl
 CHECK := $(BIN)_check
 
 TESTS := $(wildcard $(TEST_DIR)/*.c)
-TEST_OBJS := $(filter-out $(OBJ_DIR)/driver.o, $(OBJS))
+TEST_OBJS := $(filter-out $(OBJ_DIR)/nfl_driver.o, $(OBJS))
 TEST_OBJS += $(patsubst $(TEST_DIR)/%.c, $(OBJ_DIR)/%.o, $(TESTS))
 TEST_LIBS := -lcheck -lm -pthread -lrt -lsubunit
 
