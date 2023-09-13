@@ -1,9 +1,11 @@
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 
 #include "../include/hashtable.h"
 #include "../include/io_helper.h"
+#include "../include/player.h"
 
 int main (void) {
         FILE *fp = fopen("./test/test_data/data_4_entries.txt", "r");
@@ -15,6 +17,21 @@ int main (void) {
         if (!num_entries) {
                 goto FILE_EXIT;
         }
+
+        for (uint16_t entry = 0; entry < num_entries; ++entry) {
+                char *curr_entry = NULL;
+                size_t len = 0;
+                getline(&curr_entry, &len, fp);
+                player_create(curr_entry);
+        }
+
+        // char *curr_entry = NULL;
+        // size_t len = 0;
+
+        // while (getline(&curr_entry, &len, fp) != -1) {
+        //         player_create(curr_entry);
+        // }
+
 
 // Create player hashtable with known number of entries * 2
 // parse input and populate player struct
