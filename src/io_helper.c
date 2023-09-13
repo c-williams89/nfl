@@ -38,11 +38,14 @@ uint16_t get_num_entries(FILE *fp) {
                 fprintf(stderr, "get_num_entries: Invalid file pointer - NULL\n");
                 goto EXIT;
         }
+ 
+        char *buf = NULL;
+        size_t len = 0;
 
-        char buf[MAX_LINE];
-        while (fgets(buf, MAX_LINE, fp)) {
+        while (getline(&buf, &len, fp) != -1) {
                 ++num_entries;
         }
+
         rewind(fp);
 EXIT:
         return num_entries;
