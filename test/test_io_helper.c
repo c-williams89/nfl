@@ -9,7 +9,7 @@ START_TEST(test_validate_file_invalid) {
                 "/dev/urandom",
                 "/dev/zero",
                 "./test/",
-                "./nfl_check"
+                "./test/test_data/0_file"  // Manually created 0-size file
         };
 
         for (int i = 0; i < 5; ++i) {
