@@ -8,6 +8,7 @@
 	bool llist_push(llist_t * list, void *data);
 	void *llist_pop(llist_t * list);
 	bool llist_is_empty(llist_t * llist);
+	void *llist_peek(llist_t *list, int index);
 #endif
 
 

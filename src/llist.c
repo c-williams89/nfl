@@ -78,3 +78,25 @@ bool llist_is_empty(llist_t * llist)
 	}
 	return llist->size > 0 ? false : true;
 }
+
+void *llist_peek(llist_t *list, int idx) {
+	if (!list) {
+		return 0;
+	}
+	node_t *node = list->head;
+	while (idx--) {
+		node = node->next;
+	}	
+	return node->data;
+}
+
+// void *llist_peek(llist_t *llist) {
+// 	if (llist) {
+// 		return 0;
+// 	}
+// 	node_t *node = llist->head;
+// 	while (node) {
+// 		node = node->next;
+// 	}
+// 	return node->data;
+// }

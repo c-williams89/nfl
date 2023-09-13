@@ -16,6 +16,7 @@ typedef struct player_t {
         char *birthday;
         char *college;
         llist_t *teams;
+        int num_teams;
 }player_t;
 
 typedef struct team_t {
@@ -45,7 +46,7 @@ player_t * player_create(char *current) {
         player->position = strsep(&current, "\t");
         player->birthday = strsep(&current, "\t");
         player->college = strsep(&current, "\t");
-        printf("%s, %s, %s, %s, %s ", player->id, player->name, player->position, player->birthday, player->college);
+        // printf("%s, %s, %s, %s, %s ", player->id, player->name, player->position, player->birthday, player->college);
 
         char *curr_team = NULL;
         curr_team = strsep(&current, "\t");
@@ -53,14 +54,15 @@ player_t * player_create(char *current) {
         while (curr_team) {
                 team_t *team = team_create(curr_team);
                 llist_enqueue(player->teams, team);
+                player->num_teams += 1;
                 curr_team = strsep(&current, "\t");
         }
-        while (!llist_is_empty(player->teams)) {
-                team_t *curr_team = (team_t *)llist_dequeue(player->teams);
-                printf("%s, %s\n", curr_team->year, curr_team->team_name);
-        }
-        // Will need peek function to add teams to team hashtable
-        printf("\n");
+
+        // while (!llist_is_empty(player->teams)) {
+        //         team_t *curr_team = (team_t *)llist_dequeue(player->teams);
+        //         printf("%s, %s\n", curr_team->year, curr_team->team_name);
+        // }
+        // printf("\n");
         
 EXIT:
         return player;
@@ -69,4 +71,30 @@ EXIT:
 bool player_insert(player_t *player, hash_t *ht) {
         char *key = player->id;
         hash_table_insert(ht, key, player);
-};
+        return true;
+}
+
+static bool team_insert(team_t *team, hash_t *ht, char *key) {
+        hash_table_insert(ht, key, team);
+        return true;
+}
+
+void player_update_team(player_t *player, hash_t *team_table) {
+        team_t *tmp = NULL;
+        printf("For player: %s\n", player->name);
+        for (int i = 0; i < player->num_teams; ++i) {
+                tmp = (team_t *)llist_peek(player->teams, i);
+                // char *key = calloc(4, sizeof(char));
+                size_t len = strlen(tmp->team_name);
+                char *key = calloc(len + 4, sizeof(char));
+                memcpy(key, tmp->year, 4);
+                strncat(key, tmp->team_name, len);
+                printf("Key: %s\n", key);
+                printf("Team: %s\n", tmp->team_name);
+                team_insert(tmp, team_table, key);
+                if (!tmp->roster) {
+                        tmp->roster = llist_create();
+                }
+                llist_enqueue(tmp->roster, player);
+        }
+}

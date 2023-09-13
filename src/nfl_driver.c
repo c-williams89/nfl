@@ -32,6 +32,7 @@ int main (void) {
         }
 
         hash_t *player_table = hash_table_create(num_entries * 2, hash);
+        hash_t *team_table = hash_table_create(32, hash);
 
         for (uint16_t entry = 0; entry < num_entries; ++entry) {
                 char *curr_entry = NULL;
@@ -39,9 +40,11 @@ int main (void) {
                 getline(&curr_entry, &len, fp);
                 curr_entry[strcspn(curr_entry, "\n")] = '\0';
                 player_t *player = player_create(curr_entry);
+                player_update_team(player, team_table);
                 player_insert(player, player_table);
         }
         hash_table_print(player_table);
+        hash_table_print_team(team_table);
 
 // Create player hashtable with known number of entries * 2
 // parse input and populate player struct

@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <errno.h>
 #include "hashtable.h"
+#include "player.h"
+#include "llist.h"
 
 #define LOAD(x) ((x * 3) / 4)
 
@@ -70,6 +72,7 @@ static entry_t *create_entry(void *data) {
         entry_t *entry = calloc(1, sizeof(*entry));
         //ABC
         entry->data = data;
+        return entry;
 }
 
 bool hash_table_insert(hash_t *ht, char *key, void *data) {
@@ -99,9 +102,24 @@ bool hash_table_insert(hash_t *ht, char *key, void *data) {
 
 void hash_table_print(hash_t *ht) {
         for (int i = 0; i < ht->max_cap; ++i) {
-                printf("index %d:", i);
+                printf("index %d:\t", i);
                 if (ht->entries[i] && (!ht->entries[i]->b_to_delete)) {
-                        printf("Found an entry\n");
+                        player_t *player = (player_t *)ht->entries[i]->data;
+                        printf("%s %s %s\n", player->id, player->name, player->college);
+                } else {
+                        printf("\t-------------------\n");
+                }
+        }
+}
+
+void hash_table_print_team(hash_t *ht) {
+        for (int i = 0; i < ht->max_cap; ++i) {
+                printf("index %d:\t", i);
+                if (ht->entries[i] && (!ht->entries[i]->b_to_delete)) {
+                        team_t *team = (team_t *)ht->entries[i]->data;
+                        printf("%s %s\n", team->year, team->team_name);
+                        player_t *tmp = (player_t *)llist_dequeue(team->roster);
+                        printf("\t%s\n", tmp->name);
                 } else {
                         printf("\t-------------------\n");
                 }

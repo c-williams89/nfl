@@ -10,6 +10,7 @@ typedef struct hash_t hash_t;
 hash_t *hash_table_create(uint32_t size, hash_f);
 bool hash_table_insert(hash_t *ht, char *key, void *data);
 void hash_table_print(hash_t *ht);
+void hash_table_print_team(hash_t *ht);
 
 #endif
 
