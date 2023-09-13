@@ -16,11 +16,12 @@ uint64_t hash(char *key) {
 }
 
 START_TEST(test_hash_table_create_valid) {
-        ck_assert_int_eq(hash_table_create(32, hash), 1);
+        ck_assert_ptr_ne(hash_table_create(32, hash), NULL);
 }END_TEST
 
 START_TEST (test_hash_table_create_invalid) {
-        ck_assert_int_eq(hash_table_create(NULL, hash), 0);
+        ck_assert_ptr_eq(hash_table_create(0, hash), 0);
+        ck_assert_ptr_eq(hash_table_create(32, NULL), 0);
 }END_TEST
 
 static TFun hashtable_tests[] = {
