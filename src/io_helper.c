@@ -5,6 +5,8 @@
 #include <errno.h>
 #include <stdint.h>
 
+enum { MAX_LINE = 512 };
+
 int validate_file(FILE *fp) {
         int exit_status = 0;
         if (!fp) {
@@ -31,7 +33,17 @@ EXIT:
 }
 
 uint16_t get_num_entries(FILE *fp) {
-        return -1;
-}
+        uint16_t num_entries = 0;
+        if (!fp) {
+                fprintf(stderr, "get_num_entries: Invalid file pointer - NULL\n");
+                goto EXIT;
+        }
 
-// TODO: Add get num_entries
+        char buf[MAX_LINE];
+        while (fgets(buf, MAX_LINE, fp)) {
+                ++num_entries;
+        }
+        rewind(fp);
+EXIT:
+        return num_entries;
+}

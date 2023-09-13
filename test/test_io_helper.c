@@ -27,6 +27,8 @@ START_TEST(test_validate_file_valid) {
 START_TEST (test_get_num_entries_valid) {
         FILE *fp = fopen("./test/test_data/data_4_entries.txt", "r");
         ck_assert_int_eq(get_num_entries(fp), 4);
+        fp = fopen("./test/test_data/data_0_entries.txt", "r");
+        ck_assert_int_eq(get_num_entries(fp), 0);
 }END_TEST
 
 START_TEST(test_get_num_entries_invalid){
