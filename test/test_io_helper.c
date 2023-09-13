@@ -1,5 +1,6 @@
 #include <check.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "io_helper.h"
 
@@ -23,9 +24,21 @@ START_TEST(test_validate_file_valid) {
         ck_assert_int_eq(validate_file(fp), 1);
 }END_TEST
 
+START_TEST (test_get_num_entries_valid) {
+        FILE *fp = fopen("./test/test_data/data_4_entries.txt", "r");
+        ck_assert_int_eq(get_num_entries(fp), 4);
+}END_TEST
+
+START_TEST(test_get_num_entries_invalid){
+        ck_assert_int_eq(get_num_entries(NULL), 0);
+
+}END_TEST
+
 static TFun io_tests[] = {
         test_validate_file_invalid,
         test_validate_file_valid,
+        test_get_num_entries_valid,
+        test_get_num_entries_invalid,
         NULL
 };
 

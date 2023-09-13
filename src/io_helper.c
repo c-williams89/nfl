@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <stdint.h>
 
 int validate_file(FILE *fp) {
         int exit_status = 0;
@@ -27,6 +28,10 @@ int validate_file(FILE *fp) {
 
 EXIT:
         return exit_status;
+}
+
+uint16_t get_num_entries(FILE *fp) {
+        return -1;
 }
 
 // TODO: Add get num_entries
