@@ -1,6 +1,6 @@
 #ifndef PLAYER_H 
 	#define PLAYER_H
-	void func_name ();
+	int player_create(char *curr);
 #endif
 
 

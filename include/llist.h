@@ -1,5 +1,6 @@
 #ifndef LLIST_H
 	#define LLIST_H
+	#include <stdbool.h>
 	typedef struct llist_t llist_t;
 	llist_t *llist_create(void);
 	bool llist_enqueue(llist_t * list, void *data);
