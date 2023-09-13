@@ -28,3 +28,5 @@ int validate_file(FILE *fp) {
 EXIT:
         return exit_status;
 }
+
+// TODO: Add get num_entries

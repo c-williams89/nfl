@@ -3,7 +3,29 @@
 
 #include "../include/hashtable.h"
 
+uint64_t hash(char *key) {
+        uint64_t hash = 5381;
+        int c;
+        c = *key++;
+
+        while (key) {
+                hash = ((hash << 5) + hash) + c;
+                c = *key++;
+        }
+        return hash;
+}
+
+START_TEST(test_hash_table_create_valid) {
+        ck_assert_int_eq(hash_table_create(32, hash), 1);
+}END_TEST
+
+START_TEST (test_hash_table_create_invalid) {
+        ck_assert_int_eq(hash_table_create(NULL, hash), 0);
+}END_TEST
+
 static TFun hashtable_tests[] = {
+        test_hash_table_create_valid,
+        test_hash_table_create_invalid,
         NULL
 };
 

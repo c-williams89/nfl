@@ -1,7 +1,7 @@
 #include <check.h>
 #include <stdio.h>
 
-#include "../include/io_helper.h"
+#include "io_helper.h"
 
 START_TEST(test_validate_file_invalid) {
         const char *invalid_files[] = {
