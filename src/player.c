@@ -5,6 +5,8 @@
 #include <errno.h>
 #include <string.h>
 
+// #include "../include/player.h"
+#include "../include/hashtable.h"
 #include "../include/llist.h"
 
 typedef struct player_t {
@@ -14,7 +16,7 @@ typedef struct player_t {
         char *birthday;
         char *college;
         llist_t *teams;
-} player_t;
+}player_t;
 
 typedef struct team_t {
         char *team_name;
@@ -37,7 +39,7 @@ player_t * player_create(char *current) {
                 errno = 0;
                 goto EXIT;
         }
-        
+
         player->id = strsep(&current, "\t");
         player->name = strsep(&current, "\t");
         player->position = strsep(&current, "\t");
@@ -63,3 +65,8 @@ player_t * player_create(char *current) {
 EXIT:
         return player;
 }
+
+bool player_insert(player_t *player, hash_t *ht) {
+        char *key = player->id;
+        hash_table_insert(ht, key, player);
+};

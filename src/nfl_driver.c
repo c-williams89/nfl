@@ -7,21 +7,18 @@
 #include "../include/hashtable.h"
 #include "../include/io_helper.h"
 #include "../include/player.h"
+#include "../include/llist.h"
 
-// typedef struct player_t {
-//         char *id;
-//         char *name;
-//         char *position;
-//         char *birthday;
-//         char *college;
-//         llist_t *teams;
-// } player_t;
+uint64_t hash(char *key) {
+        uint64_t hash = 5381;
+        int c;
 
-// typedef struct team_t {
-//         char *team_name;
-//         char *year;
-//         llist_t *roster;
-// }team_t;
+        while (c = *key++) {
+                hash = ((hash << 5) + hash) + c;
+
+        }
+        return hash;
+}
 
 int main (void) {
         FILE *fp = fopen("./test/test_data/data_4_entries.txt", "r");
@@ -34,23 +31,17 @@ int main (void) {
                 goto FILE_EXIT;
         }
 
+        hash_t *player_table = hash_table_create(num_entries * 2, hash);
+
         for (uint16_t entry = 0; entry < num_entries; ++entry) {
                 char *curr_entry = NULL;
                 size_t len = 0;
-                // for entry 1, \n is at position 60;
                 getline(&curr_entry, &len, fp);
                 curr_entry[strcspn(curr_entry, "\n")] = '\0';
-                player_create(curr_entry);
+                player_t *player = player_create(curr_entry);
+                player_insert(player, player_table);
         }
-// First entry 61 chars
-
-        // char *curr_entry = NULL;
-        // size_t len = 0;
-
-        // while (getline(&curr_entry, &len, fp) != -1) {
-        //         player_create(curr_entry);
-        // }
-
+        hash_table_print(player_table);
 
 // Create player hashtable with known number of entries * 2
 // parse input and populate player struct
