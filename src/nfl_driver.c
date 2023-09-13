@@ -1,9 +1,24 @@
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "../include/hashtable.h"
 #include "../include/io_helper.h"
+#include "../include/player.h"
+#include "../include/llist.h"
+
+uint64_t hash(char *key) {
+        uint64_t hash = 5381;
+        int c;
+
+        while (c = *key++) {
+                hash = ((hash << 5) + hash) + c;
+
+        }
+        return hash;
+}
 
 int main (void) {
         FILE *fp = fopen("./test/test_data/data_4_entries.txt", "r");
@@ -15,6 +30,21 @@ int main (void) {
         if (!num_entries) {
                 goto FILE_EXIT;
         }
+
+        hash_t *player_table = hash_table_create(num_entries * 2, hash);
+        hash_t *team_table = hash_table_create(32, hash);
+
+        for (uint16_t entry = 0; entry < num_entries; ++entry) {
+                char *curr_entry = NULL;
+                size_t len = 0;
+                getline(&curr_entry, &len, fp);
+                curr_entry[strcspn(curr_entry, "\n")] = '\0';
+                player_t *player = player_create(curr_entry);
+                player_update_team(player, team_table);
+                player_insert(player, player_table);
+        }
+        hash_table_print(player_table);
+        hash_table_print_team(team_table);
 
 // Create player hashtable with known number of entries * 2
 // parse input and populate player struct
