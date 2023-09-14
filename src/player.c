@@ -69,30 +69,17 @@ bool player_insert(player_t *player, hash_t *ht) {
 static bool team_insert(team_t *team, hash_t *ht, char *key, player_t *player) {
         team_t *tmp = (team_t *)find(ht, key);
 
-        // if (!tmp) {
-        //         team->roster = llist_create();
-        //         llist_enqueue(team->roster, player);
-        // }
-
         if (tmp) {
-                // if (!tmp->roster) {
-                //         tmp->roster = llist_create();
-                // }
-                printf("here with %s\n", player->name);
                 llist_enqueue(tmp->roster, player);
         } else {
                 team->roster = llist_create();
                 llist_enqueue(team->roster, player);
                 hash_table_insert(ht, key, team);
         }
-
-        // if (!find(ht, key)) {
-        //         hash_table_insert(ht, key, team);
-        // }
         return true;
 }
 
-void player_update_team(player_t *player, hash_t *team_table) {
+void player_add_to_team(player_t *player, hash_t *team_table) {
         team_t *tmp = NULL;
         printf("For player: %s\n", player->name);
         for (int i = 0; i < player->num_teams; ++i) {
@@ -104,9 +91,5 @@ void player_update_team(player_t *player, hash_t *team_table) {
                 strncat(key, tmp->team_name, len);
 
                 team_insert(tmp, team_table, key, player);
-                // if (!tmp->roster) {
-                //         tmp->roster = llist_create();
-                // }
-                // llist_enqueue(tmp->roster, player);
         }
 }

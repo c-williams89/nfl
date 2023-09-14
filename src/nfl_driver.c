@@ -100,7 +100,7 @@ int main (int argc, char **argv) {
                 getline(&curr_entry, &len, fp);
                 curr_entry[strcspn(curr_entry, "\n")] = '\0';
                 player_t *player = player_create(curr_entry);
-                player_update_team(player, team_table);
+                player_add_to_team(player, team_table);
                 printf("\n");
                 player_insert(player, player_table);
         }
