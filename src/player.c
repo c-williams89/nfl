@@ -46,7 +46,6 @@ player_t * player_create(char *current) {
         player->position = strsep(&current, "\t");
         player->birthday = strsep(&current, "\t");
         player->college = strsep(&current, "\t");
-        // printf("%s, %s, %s, %s, %s ", player->id, player->name, player->position, player->birthday, player->college);
 
         char *curr_team = NULL;
         curr_team = strsep(&current, "\t");
@@ -58,6 +57,7 @@ player_t * player_create(char *current) {
                 curr_team = strsep(&current, "\t");
         }
 
+        // Debugging print
         // while (!llist_is_empty(player->teams)) {
         //         team_t *curr_team = (team_t *)llist_dequeue(player->teams);
         //         printf("%s, %s\n", curr_team->year, curr_team->team_name);
@@ -84,7 +84,6 @@ void player_update_team(player_t *player, hash_t *team_table) {
         printf("For player: %s\n", player->name);
         for (int i = 0; i < player->num_teams; ++i) {
                 tmp = (team_t *)llist_peek(player->teams, i);
-                // char *key = calloc(4, sizeof(char));
                 size_t len = strlen(tmp->team_name);
                 char *key = calloc(len + 4, sizeof(char));
                 memcpy(key, tmp->year, 4);
@@ -94,6 +93,9 @@ void player_update_team(player_t *player, hash_t *team_table) {
                 team_insert(tmp, team_table, key);
                 if (!tmp->roster) {
                         tmp->roster = llist_create();
+                        if (!tmp->roster) {
+                                return;
+                        }
                 }
                 llist_enqueue(tmp->roster, player);
         }
