@@ -91,7 +91,7 @@ bool hash_table_insert(hash_t *ht, char *key, void *data) {
                 // TODO: RESIZE
         }
 
-        entry_t *entry = create_entry(data, key);// TODO: write create_entry function
+        entry_t *entry = create_entry(data, key);
 
         uint64_t index = (ht->hash_function(key) % ht->max_cap);
         for (int i = 0; i < ht->max_cap; ++i) {
@@ -104,7 +104,6 @@ bool hash_table_insert(hash_t *ht, char *key, void *data) {
                 }
         }
         return true;
-        printf("Index: %ld\n", index);
 }
 
 void hash_table_print(hash_t *ht) {
@@ -135,7 +134,7 @@ void hash_table_print_team(hash_t *ht) {
                         }
                 printf("\n");
                 } else {
-                        // printf("\t-------------------\n");
+                        printf("\t-------------------\n");
                 }
         }
 }
@@ -145,7 +144,6 @@ void *find(hash_t * table, char *key) {
         for (int i = 0; i < table->max_cap; ++i) {
                 int try = (i + index) % table->max_cap;
                 if (table->entries[try]) {
-                        printf("try: %d\n", try);
                         if (0 == (strncmp(table->entries[try]->key, key, strlen(key)))) {
                                 return table->entries[try]->data;
                         }

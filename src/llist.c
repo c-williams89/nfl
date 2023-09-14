@@ -89,14 +89,3 @@ void *llist_peek(llist_t *list, int idx) {
 	}	
 	return node->data;
 }
-
-// void *llist_peek(llist_t *llist) {
-// 	if (llist) {
-// 		return 0;
-// 	}
-// 	node_t *node = llist->head;
-// 	while (node) {
-// 		node = node->next;
-// 	}
-// 	return node->data;
-// }
