@@ -33,13 +33,13 @@ bool llist_enqueue(llist_t * llist, void *data)
 		return false;
 	}
 
-	struct node_t *node = malloc(sizeof(*node));
+	node_t *node = calloc(1, sizeof(*node));
 	if (!node) {
 		return false;
 	}
 
 	node->data = data;
-	node->next = NULL;
+	// node->next = NULL;
 
 	if (llist->tail) {
 		llist->tail->next = node;
