@@ -37,10 +37,10 @@ static uint64_t hash(char *key) {
 hash_t *hash_table_create(uint32_t size, hash_f hf) {
         hash_t *table = NULL;
         
-        // if (!hf) {
-        //         fprintf(stderr, "hash_table_create: Invalid hash_f - NULL\n");
-        //         goto EXIT;
-        // }
+        if (!hf) {
+                fprintf(stderr, "hash_table_create: Invalid hash_f - NULL\n");
+                goto EXIT;
+        }
         
         if (size < 1) {
                 fprintf(stderr, "hash_table_create: Invalid size - Must be positive integer\n");
@@ -70,7 +70,7 @@ EXIT:
 
 static entry_t *create_entry(void *data) {
         entry_t *entry = calloc(1, sizeof(*entry));
-        //ABC
+        // TODO: ABC
         entry->data = data;
         return entry;
 }
@@ -82,10 +82,10 @@ bool hash_table_insert(hash_t *ht, char *key, void *data) {
         }
 
         if (ht->curr_size >= LOAD(ht->max_cap)) {
-                // RESIZE
+                // TODO: RESIZE
         }
 
-        entry_t *entry = create_entry(data);// write create_entry function
+        entry_t *entry = create_entry(data);// TODO: write create_entry function
 
         uint64_t index = (ht->hash_function(key) % ht->max_cap);
         for (int i = 0; i < ht->max_cap; ++i) {
