@@ -81,7 +81,7 @@ int main (int argc, char **argv) {
                 
         }
 
-        FILE *fp = fopen("./test/test_data/test.txt", "r");
+        FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
         if (!validate_file(fp)) {
                 goto FILE_EXIT;
         }
@@ -92,7 +92,7 @@ int main (int argc, char **argv) {
         }
 
         hash_t *player_table = hash_table_create(num_entries * 2, hash);
-        hash_t *team_table = hash_table_create(500, hash);
+        hash_t *team_table = hash_table_create(2000, hash);
 
         for (uint16_t entry = 0; entry < num_entries; ++entry) {
                 char *curr_entry = NULL;
@@ -104,7 +104,7 @@ int main (int argc, char **argv) {
                 printf("\n");
                 player_insert(player, player_table);
         }
-        hash_table_print(player_table);
+        // hash_table_print(player_table);
         hash_table_print_team(team_table);
 
 // Create player hashtable with known number of entries * 2

@@ -55,15 +55,7 @@ player_t * player_create(char *current) {
                 llist_enqueue(player->teams, team);
                 player->num_teams += 1;
                 curr_team = strsep(&current, "\t");
-        }
-
-        // Debugging print
-        // while (!llist_is_empty(player->teams)) {
-        //         team_t *curr_team = (team_t *)llist_dequeue(player->teams);
-        //         printf("%s, %s\n", curr_team->year, curr_team->team_name);
-        // }
-        // printf("\n");
-        
+        }        
 EXIT:
         return player;
 }
@@ -74,8 +66,29 @@ bool player_insert(player_t *player, hash_t *ht) {
         return true;
 }
 
-static bool team_insert(team_t *team, hash_t *ht, char *key) {
-        hash_table_insert(ht, key, team);
+static bool team_insert(team_t *team, hash_t *ht, char *key, player_t *player) {
+        team_t *tmp = (team_t *)find(ht, key);
+
+        // if (!tmp) {
+        //         team->roster = llist_create();
+        //         llist_enqueue(team->roster, player);
+        // }
+
+        if (tmp) {
+                // if (!tmp->roster) {
+                //         tmp->roster = llist_create();
+                // }
+                printf("here with %s\n", player->name);
+                llist_enqueue(tmp->roster, player);
+        } else {
+                team->roster = llist_create();
+                llist_enqueue(team->roster, player);
+                hash_table_insert(ht, key, team);
+        }
+
+        // if (!find(ht, key)) {
+        //         hash_table_insert(ht, key, team);
+        // }
         return true;
 }
 
@@ -84,19 +97,16 @@ void player_update_team(player_t *player, hash_t *team_table) {
         printf("For player: %s\n", player->name);
         for (int i = 0; i < player->num_teams; ++i) {
                 tmp = (team_t *)llist_peek(player->teams, i);
+                
                 size_t len = strlen(tmp->team_name);
-                char *key = calloc(len + 4, sizeof(char));
+                char *key = calloc(len + 5, sizeof(char));
                 memcpy(key, tmp->year, 4);
                 strncat(key, tmp->team_name, len);
-                printf("Key: %s\n", key);
-                printf("Team: %s\n", tmp->team_name);
-                team_insert(tmp, team_table, key);
-                if (!tmp->roster) {
-                        tmp->roster = llist_create();
-                        if (!tmp->roster) {
-                                return;
-                        }
-                }
-                llist_enqueue(tmp->roster, player);
+
+                team_insert(tmp, team_table, key, player);
+                // if (!tmp->roster) {
+                //         tmp->roster = llist_create();
+                // }
+                // llist_enqueue(tmp->roster, player);
         }
 }
