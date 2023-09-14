@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <getopt.h>
 
 #include "../include/hashtable.h"
 #include "../include/io_helper.h"
@@ -20,8 +21,67 @@ uint64_t hash(char *key) {
         return hash;
 }
 
-int main (void) {
-        FILE *fp = fopen("./test/test_data/data_4_entries.txt", "r");
+int main (int argc, char **argv) {
+        // CURRENT: Implement longopt. Checkout out man page and meads, looking at
+        //  return values will help with controlling the loop.
+        int c;
+        // FILE *fp = stdin;
+
+        while (1) { //TODO: Figure out better way to write this
+                int option_index = 0;
+                struct option long_options[] = {
+                        {"player", required_argument, NULL, 'p'},
+                        {"search", required_argument, NULL, 's'},
+                        {"stats", required_argument, NULL, 'S'},
+                        {"roster", required_argument, NULL, 'r'},
+                        {"teams", required_argument, NULL, 't'},
+                        {"distance", required_argument, NULL, 'd'},
+                        {0, 0, 0, 0}
+                };
+                c = getopt_long(argc, argv, "", long_options, &option_index);
+                if (-1 == c) {
+                        break;
+                }
+
+                switch (c) {
+                        case 0:
+                                break;
+                        case 1:
+                                // fp = fopen(optarg, "r");
+                                // if (!validate_file(fp)) {
+                                //         goto FILE_EXIT;
+                                // }
+                                break;
+                        case 'p':
+                                printf("player case\n");
+                                break;
+                        case 's':
+                                printf("search case\n");
+                                break;
+                        case 'S':
+                                printf("stats case\n");
+                                break;
+                        case 'r':
+                                printf("roster case\n");
+                                break;
+                        case 't':
+                                printf("teams case\n");
+                                break;
+                        case 'd':
+                                printf("distance case\n");
+                                break;
+                        case '?':
+                                goto FILE_EXIT;
+                        case ':':
+                                goto FILE_EXIT;
+                        default:
+                                break;
+
+                }
+                
+        }
+
+        FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
         if (!validate_file(fp)) {
                 goto FILE_EXIT;
         }
@@ -40,11 +100,11 @@ int main (void) {
                 getline(&curr_entry, &len, fp);
                 curr_entry[strcspn(curr_entry, "\n")] = '\0';
                 player_t *player = player_create(curr_entry);
-                player_update_team(player, team_table);
+                // player_update_team(player, team_table);
                 player_insert(player, player_table);
         }
         hash_table_print(player_table);
-        hash_table_print_team(team_table);
+        // hash_table_print_team(team_table);
 
 // Create player hashtable with known number of entries * 2
 // parse input and populate player struct
