@@ -167,3 +167,14 @@ llist_t *find_matches(hash_t *table, char *val, comp_f compare) {
         }
         return search_results;
 }
+
+llist_t *find_teams(hash_t *table) {
+        llist_t *team_results = llist_create();
+        for (int i = 0; i < table->max_cap; ++i) {
+                if (table->entries[i]) {
+                        llist_enqueue(team_results, table->entries[i]->data);
+                }
+        }
+
+        return team_results;
+}

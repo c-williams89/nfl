@@ -8,6 +8,7 @@
 // #include "../include/player.h"
 #include "../include/hashtable.h"
 #include "../include/llist.h"
+#include "../include/trie.h"
 
 typedef struct player_t {
         char *id;
@@ -123,7 +124,7 @@ void print_player(char *player_arg, hash_t *player_table) {
         if (player) {
                 printf("%s\t%s\t%s\t%s\n", player->id, player->name, player->position, player->college);
                 while (!llist_is_empty(player->teams)) {
-                        team_t *team = llist_dequeue(player->teams);
+                        team_t *team = (team_t *)llist_dequeue(player->teams);
                         printf("\t%s - %s\n", team->year, team->team_name);
                 }
         }
@@ -132,7 +133,17 @@ void print_player(char *player_arg, hash_t *player_table) {
 void print_search_results(char *search_param, hash_t *player_table) {
         llist_t *search_results = find_matches(player_table, search_param, (comp_f)compare_fields);
         while (!llist_is_empty(search_results)) {
-                player_t *player = llist_dequeue(search_results);
+                player_t *player = (team_t *)llist_dequeue(search_results);
                 printf("%s\t%s\t%s\n", player->id, player->name, player->college);
         } 
+}
+
+void print_teams(hash_t *team_table) {
+        llist_t *team_results = find_teams(team_table);
+        trie_t *team_trie = trie_create();
+        while (!llist_is_empty(team_results)) {
+                team_t *team = (team_t*)llist_dequeue(team_results);
+                trie_insert(&team_trie, team->team_name);
+        }
+        trie_print(team_trie);
 }
