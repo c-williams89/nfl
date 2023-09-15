@@ -81,7 +81,6 @@ static bool team_insert(team_t *team, hash_t *ht, char *key, player_t *player) {
 
 void player_add_to_team(player_t *player, hash_t *team_table) {
         team_t *tmp = NULL;
-        printf("For player: %s\n", player->name);
         for (int i = 0; i < player->num_teams; ++i) {
                 tmp = (team_t *)llist_peek(player->teams, i);
                 
@@ -92,4 +91,27 @@ void player_add_to_team(player_t *player, hash_t *team_table) {
 
                 team_insert(tmp, team_table, key, player);
         }
+}
+
+void print_options() {
+
+}
+
+int compare (player_t *player, char *val){
+        if (0 == strncmp(player->name, val, strlen(player->name))) {
+                return 1;
+        }
+        return 0;
+}
+
+void print_player(char *player_arg, hash_t *player_table) {
+        // Prints Id, name, college, position, and teams played for
+        player_t *player;
+        if (strpbrk(player_arg, "0123456789")) {
+                char *key = player_arg;
+                player = (player_t *)find(player_table, key);
+        } else {
+                player = (player_t *)find_no_key(player_table, player_arg, compare);
+        }
+        printf("%s\t%s\t%s\t%s\n", player->id, player->name, player->college, player->position);
 }

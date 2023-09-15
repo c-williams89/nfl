@@ -9,12 +9,13 @@
 #include "../include/io_helper.h"
 #include "../include/player.h"
 #include "../include/llist.h"
+#include "../include/long_opts_helper.h"
 
 uint64_t hash(char *key) {
         uint64_t hash = 5381;
         int c;
 
-        while (c = *key++) {
+        while ((c = *key++)) {
                 hash = ((hash << 5) + hash) + c;
 
         }
@@ -25,7 +26,7 @@ int main (int argc, char **argv) {
         // CURRENT: Implement longopt. Checkout out man page and meads, looking at
         //  return values will help with controlling the loop.
         int c;
-        // FILE *fp = stdin;
+        l_opts *my_opts = calloc(1, sizeof(l_opts));
 
         while (1) { //TODO: Figure out better way to write this
                 int option_index = 0;
@@ -47,13 +48,17 @@ int main (int argc, char **argv) {
                         case 0:
                                 break;
                         case 1:
+                                printf("Found file arg\n");
                                 // fp = fopen(optarg, "r");
                                 // if (!validate_file(fp)) {
                                 //         goto FILE_EXIT;
                                 // }
                                 break;
                         case 'p':
+                                my_opts->option = 'p';
+                                my_opts->search_param1 = optarg;
                                 printf("player case\n");
+                                
                                 break;
                         case 's':
                                 printf("search case\n");
@@ -101,11 +106,11 @@ int main (int argc, char **argv) {
                 curr_entry[strcspn(curr_entry, "\n")] = '\0';
                 player_t *player = player_create(curr_entry);
                 player_add_to_team(player, team_table);
-                printf("\n");
                 player_insert(player, player_table);
         }
+        print_player(my_opts->search_param1, player_table);
         // hash_table_print(player_table);
-        hash_table_print_team(team_table);
+        // hash_table_print_team(team_table);
 
 // Create player hashtable with known number of entries * 2
 // parse input and populate player struct
@@ -113,6 +118,6 @@ int main (int argc, char **argv) {
 // Add team struct to 
 
 FILE_EXIT:
-        fclose(fp);
+        // fclose(fp);
         return 1;
 }
