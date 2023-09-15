@@ -69,7 +69,11 @@ int main (int argc, char **argv) {
                                 printf("stats case\n");
                                 break;
                         case 'r':
-                                printf("roster case\n");
+                                my_opts->search_param1 = optarg;
+                                if ((optind < argc) && (*argv[optind] != '-')) {
+                                        my_opts->search_param2 = argv[optind];
+                                }
+                                ++optind;
                                 break;
                         case 't':
                                 printf("teams case\n");
@@ -112,7 +116,7 @@ int main (int argc, char **argv) {
         }
         // print_player(my_opts->search_param1, player_table);
         // print_search_results(my_opts->search_param1, player_table);
-        print_teams(team_table);
+        // print_teams(team_table);
         // hash_table_print(player_table);
         // hash_table_print_team(team_table);
 

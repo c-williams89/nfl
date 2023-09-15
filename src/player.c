@@ -147,3 +147,4 @@ void print_teams(hash_t *team_table) {
         }
         trie_print(team_trie);
 }
+
