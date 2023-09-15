@@ -92,6 +92,8 @@ bool hash_table_insert(hash_t *ht, char *key, void *data) {
         return true;
 }
 
+/*
+ The following are debugging print statements and can be removed later
 void hash_table_print(hash_t *ht) {
         for (int i = 0; i < ht->max_cap; ++i) {
                 printf("index %d:\t", i);
@@ -125,6 +127,7 @@ void hash_table_print_team(hash_t *ht) {
         }
         printf("Size: %d\n", ht->curr_size);
 }
+*/
 
 // void print_players(hash_t *t) {
 //         for (int i = 0; i < t->max_cap; ++i) {
@@ -151,11 +154,14 @@ void *find(hash_t * table, char *key) {
 }
 
 void *find_no_key(hash_t *table, char *val, comp_f compare) {
+        void *data = NULL;
         for (int i = 0; i < table->max_cap; ++i) {
                 if (table->entries[i]) {
                         if (compare(table->entries[i]->data, val)) {
-                                return table->entries[i]->data;
+                                data = table->entries[i]->data;
                         }
                 }
         }
+        
+        return data;
 }

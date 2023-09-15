@@ -104,6 +104,13 @@ int compare (player_t *player, char *val){
         return 0;
 }
 
+// int compare (void *player, char *val){
+//         if (0 == strncmp((player_t *)player->name, val, strlen(player->name))) {
+//                 return 1;
+//         }
+//         return 0;
+// }
+
 void print_player(char *player_arg, hash_t *player_table) {
         // Prints Id, name, college, position, and teams played for
         player_t *player;
@@ -111,7 +118,10 @@ void print_player(char *player_arg, hash_t *player_table) {
                 char *key = player_arg;
                 player = (player_t *)find(player_table, key);
         } else {
-                player = (player_t *)find_no_key(player_table, player_arg, compare);
+                player = (player_t *)find_no_key(player_table, player_arg, (comp_f)compare);
         }
-        printf("%s\t%s\t%s\t%s\n", player->id, player->name, player->college, player->position);
+
+        if (player) {
+                printf("%s\t%s\t%s\t%s\n", player->id, player->name, player->college, player->position);
+        }
 }

@@ -1,2 +1,4 @@
 # Ignore Rubric
 /doc/nfl.pdf
+
+.vscode/
