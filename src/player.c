@@ -5,7 +5,6 @@
 #include <errno.h>
 #include <string.h>
 
-// #include "../include/player.h"
 #include "../include/hashtable.h"
 #include "../include/llist.h"
 #include "../include/trie.h"
@@ -103,7 +102,7 @@ int compare_player (player_t *player, char *val){
 
 int compare_fields (player_t *player, char *val) {
         // Will hand a player and compare val against player name or college
-        player_t *tmp = NULL;
+        // player_t *tmp = NULL;
         if (strstr(player->name, val) || strstr(player->college, val)) {
                 return 1;
         }
@@ -133,7 +132,7 @@ void print_player(char *player_arg, hash_t *player_table) {
 void print_search_results(char *search_param, hash_t *player_table) {
         llist_t *search_results = find_matches(player_table, search_param, (comp_f)compare_fields);
         while (!llist_is_empty(search_results)) {
-                player_t *player = (team_t *)llist_dequeue(search_results);
+                player_t *player = (player_t *)llist_dequeue(search_results);
                 printf("%s\t%s\t%s\n", player->id, player->name, player->college);
         } 
 }
@@ -145,6 +144,14 @@ void print_teams(hash_t *team_table) {
                 team_t *team = (team_t*)llist_dequeue(team_results);
                 trie_insert(&team_trie, team->team_name);
         }
+
         trie_print(team_trie);
 }
 
+void print_roster (hash_t *team_table, char *key) {
+        team_t *team = find(team_table, key);
+        while (!llist_is_empty(team->roster)) {
+                player_t *player = (player_t *)llist_dequeue(team->roster);
+                printf("\t%s\t%s\t%s\t%s\n", player->id, player->name, player->position, player->college);
+        }
+}

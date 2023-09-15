@@ -1,6 +1,7 @@
 #ifndef PLAYER_H 
 	#define PLAYER_H
 	#include <stdbool.h>
+	#include "../include/hashtable.h"
 	typedef struct llist_t llist_t;
 	typedef struct team_t team_t;
 	typedef struct player_t player_t;
@@ -10,6 +11,7 @@
 	void print_player(char *player_arg, hash_t *player_table);
 	void print_search_results(char *search_param, hash_t *player_table);
 	void print_teams(hash_t *team_table);
+	void print_roster (hash_t *team_table, char *key);
 #endif
 
 
