@@ -93,31 +93,31 @@ void player_add_to_team(player_t *player, hash_t *team_table) {
         }
 }
 
-void print_options() {
-
-}
-
-int compare (player_t *player, char *val){
+int compare_player (player_t *player, char *val){
         if (0 == strncmp(player->name, val, strlen(player->name))) {
                 return 1;
         }
         return 0;
 }
 
+int compare_fields (player_t *player, char *val) {
+        // Will hand a player and compare val against player name or college
+        player_t *tmp = NULL;
+        if (strstr(player->name, val) || strstr(player->college, val)) {
+                return 1;
+        }
+
+        return 0;
+}
+
 void print_player(char *player_arg, hash_t *player_table) {
-        // Prints Id, name, college, position, and teams played for
-        /*
-        DaltAn00    Andy Dalton    QB    TCU
-            2011 - Cincinatti Bengals
-            ...
-            2019 - Cincy Bengals
-        */
         player_t *player;
+
         if (strpbrk(player_arg, "0123456789")) {
                 char *key = player_arg;
                 player = (player_t *)find(player_table, key);
         } else {
-                player = (player_t *)find_no_key(player_table, player_arg, (comp_f)compare);
+                player = (player_t *)find_no_key(player_table, player_arg, (comp_f)compare_player);
         }
 
         if (player) {
@@ -127,4 +127,12 @@ void print_player(char *player_arg, hash_t *player_table) {
                         printf("\t%s - %s\n", team->year, team->team_name);
                 }
         }
+}
+
+void print_search_results(char *search_param, hash_t *player_table) {
+        llist_t *search_results = find_matches(player_table, search_param, (comp_f)compare_fields);
+        while (!llist_is_empty(search_results)) {
+                player_t *player = llist_dequeue(search_results);
+                printf("%s\t%s\t%s\n", player->id, player->name, player->college);
+        } 
 }
