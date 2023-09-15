@@ -111,7 +111,8 @@ int main (int argc, char **argv) {
                 player_insert(player, player_table);
         }
         // print_player(my_opts->search_param1, player_table);
-        print_search_results(my_opts->search_param1, player_table);
+        // print_search_results(my_opts->search_param1, player_table);
+        print_teams(team_table);
         // hash_table_print(player_table);
         // hash_table_print_team(team_table);
 
