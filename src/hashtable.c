@@ -129,15 +129,6 @@ void hash_table_print_team(hash_t *ht) {
 }
 */
 
-// void print_players(hash_t *t) {
-//         for (int i = 0; i < t->max_cap; ++i) {
-//                 if (t->entries[i]) {
-//                         player_t *player = t->entries[i]->data;
-//                         printf("%s %s", player->name, player->college);
-//                 }
-//         }
-// }
-
 void *find(hash_t * table, char *key) {
         uint64_t index = (table->hash_function(key) % table->max_cap);
         for (int i = 0; i < table->max_cap; ++i) {
@@ -146,10 +137,9 @@ void *find(hash_t * table, char *key) {
                         if (0 == (strncmp(table->entries[try]->key, key, strlen(key)))) {
                                 return table->entries[try]->data;
                         }
-                } else {
-                        break;
                 }
         }
+
         return NULL;
 }
 
@@ -162,6 +152,18 @@ void *find_no_key(hash_t *table, char *val, comp_f compare) {
                         }
                 }
         }
-        
+
         return data;
+}
+
+llist_t *find_matches(hash_t *table, char *val, comp_f compare) {
+        llist_t *search_results = llist_create();
+        for (int i = 0; i < table->max_cap; ++i) {
+                if (table->entries[i]) {
+                        if (compare(table->entries[i]->data, val)) {
+                                llist_enqueue(search_results, table->entries[i]->data);
+                        }
+                }
+        }
+        return search_results;
 }

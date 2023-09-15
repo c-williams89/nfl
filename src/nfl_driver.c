@@ -61,6 +61,8 @@ int main (int argc, char **argv) {
                                 
                                 break;
                         case 's':
+                                my_opts->option = 's';
+                                my_opts->search_param1 = optarg;
                                 printf("search case\n");
                                 break;
                         case 'S':
@@ -108,7 +110,8 @@ int main (int argc, char **argv) {
                 player_add_to_team(player, team_table);
                 player_insert(player, player_table);
         }
-        print_player(my_opts->search_param1, player_table);
+        // print_player(my_opts->search_param1, player_table);
+        print_search_results(my_opts->search_param1, player_table);
         // hash_table_print(player_table);
         // hash_table_print_team(team_table);
 
