@@ -104,15 +104,14 @@ int compare (player_t *player, char *val){
         return 0;
 }
 
-// int compare (void *player, char *val){
-//         if (0 == strncmp((player_t *)player->name, val, strlen(player->name))) {
-//                 return 1;
-//         }
-//         return 0;
-// }
-
 void print_player(char *player_arg, hash_t *player_table) {
         // Prints Id, name, college, position, and teams played for
+        /*
+        DaltAn00    Andy Dalton    QB    TCU
+            2011 - Cincinatti Bengals
+            ...
+            2019 - Cincy Bengals
+        */
         player_t *player;
         if (strpbrk(player_arg, "0123456789")) {
                 char *key = player_arg;
@@ -122,6 +121,10 @@ void print_player(char *player_arg, hash_t *player_table) {
         }
 
         if (player) {
-                printf("%s\t%s\t%s\t%s\n", player->id, player->name, player->college, player->position);
+                printf("%s\t%s\t%s\t%s\n", player->id, player->name, player->position, player->college);
+                while (!llist_is_empty(player->teams)) {
+                        team_t *team = llist_dequeue(player->teams);
+                        printf("\t%s - %s\n", team->year, team->team_name);
+                }
         }
 }
