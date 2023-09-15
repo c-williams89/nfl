@@ -25,20 +25,6 @@ typedef struct hash_t {
         uint32_t curr_size;
 }hash_t;
 
-// static uint64_t hash(char *key) {
-//         uint64_t hash = 5381;
-//         int c;
-//         c = *key++;
-
-//         while (key) {
-//                 hash = ((hash << 5) + hash) + c;
-//                 c = *key++;
-//         }
-//         return hash;
-// }
-
-// entry_t *find(hash_t * table, char *key);
-
 hash_t *hash_table_create(uint32_t size, hash_f hf) {
         hash_t *table = NULL;
         
@@ -106,6 +92,8 @@ bool hash_table_insert(hash_t *ht, char *key, void *data) {
         return true;
 }
 
+/*
+ The following are debugging print statements and can be removed later
 void hash_table_print(hash_t *ht) {
         for (int i = 0; i < ht->max_cap; ++i) {
                 printf("index %d:\t", i);
@@ -137,7 +125,18 @@ void hash_table_print_team(hash_t *ht) {
                         printf("\t-------------------\n");
                 }
         }
+        printf("Size: %d\n", ht->curr_size);
 }
+*/
+
+// void print_players(hash_t *t) {
+//         for (int i = 0; i < t->max_cap; ++i) {
+//                 if (t->entries[i]) {
+//                         player_t *player = t->entries[i]->data;
+//                         printf("%s %s", player->name, player->college);
+//                 }
+//         }
+// }
 
 void *find(hash_t * table, char *key) {
         uint64_t index = (table->hash_function(key) % table->max_cap);
@@ -152,4 +151,17 @@ void *find(hash_t * table, char *key) {
                 }
         }
         return NULL;
+}
+
+void *find_no_key(hash_t *table, char *val, comp_f compare) {
+        void *data = NULL;
+        for (int i = 0; i < table->max_cap; ++i) {
+                if (table->entries[i]) {
+                        if (compare(table->entries[i]->data, val)) {
+                                data = table->entries[i]->data;
+                        }
+                }
+        }
+        
+        return data;
 }
