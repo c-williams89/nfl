@@ -26,6 +26,7 @@ typedef struct team_t {
 }team_t;
 
 static team_t * team_create(char * curr_team) {
+        //BUG: Memory leak here
         team_t *team = calloc(1, sizeof(*team));
         team->year = strsep(&curr_team, ",");
         team->team_name = strsep(&curr_team, "\t");
@@ -85,11 +86,13 @@ void player_add_to_team(player_t *player, hash_t *team_table) {
                 tmp = (team_t *)llist_peek(player->teams, i);
                 
                 size_t len = strlen(tmp->team_name);
+                //BUG: memory leak here
                 char *key = calloc(len + 5, sizeof(char));
                 memcpy(key, tmp->year, 4);
                 strncat(key, tmp->team_name, len);
 
                 team_insert(tmp, team_table, key, player);
+                // free(key);
         }
 }
 
@@ -102,7 +105,6 @@ int compare_player (player_t *player, char *val){
 
 int compare_fields (player_t *player, char *val) {
         // Will hand a player and compare val against player name or college
-        // player_t *tmp = NULL;
         if (strstr(player->name, val) || strstr(player->college, val)) {
                 return 1;
         }
@@ -154,4 +156,24 @@ void print_roster (hash_t *team_table, char *key) {
                 player_t *player = (player_t *)llist_dequeue(team->roster);
                 printf("\t%s\t%s\t%s\t%s\n", player->id, player->name, player->position, player->college);
         }
+}
+
+// void destroy_players() {
+//         player_t *player;
+//         free(player->id);
+//         // llist_destroy on player-teams. only nodes and list, not node data
+//         llist_destroy(&(player)->teams);
+// }
+// void data_destroy (hash_t *table) {
+//         hashtable_destroy(table, destroy_players);
+// }
+
+void player_destroy(player_t *player) {
+        llist_destroy(player->teams);
+        free(player->id);
+}
+
+void team_destroy(team_t *team) {
+        // free(team->year);
+        llist_destroy(team->roster);       
 }

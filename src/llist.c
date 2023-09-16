@@ -89,3 +89,38 @@ void *llist_peek(llist_t *list, int idx) {
 	}	
 	return node->data;
 }
+
+// void llist_destroy(llist_t ** list)
+// {
+// 	if (!list || !*list) {
+// 		return;
+// 	}
+// 	llist_t *copy = *list;
+// 	node_t *head = copy->head;
+// 	while (head) {
+// 		node_t *tmp = head;
+// 		head = head->next;
+// 		// delete(tmp->data);
+// 		free(tmp);
+// 	}
+// 	free(copy);
+// 	*list = NULL;
+// }
+
+void llist_destroy(llist_t * llist)
+{
+	if (!llist) {
+		return;
+	}
+
+	struct node_t *node = llist->head;
+	struct node_t *temp = NULL;
+	while (node) {
+		temp = node;
+		node = node->next;
+		free(temp);
+	}
+	llist->head = NULL;
+	llist->tail = NULL;
+	free(llist);
+}

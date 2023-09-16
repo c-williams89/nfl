@@ -45,6 +45,7 @@ uint16_t get_num_entries(FILE *fp) {
         while (getline(&buf, &len, fp) != -1) {
                 ++num_entries;
         }
+        free(buf);
 
         rewind(fp);
 EXIT:

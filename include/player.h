@@ -12,6 +12,10 @@
 	void print_search_results(char *search_param, hash_t *player_table);
 	void print_teams(hash_t *team_table);
 	void print_roster (hash_t *team_table, char *key);
+	void destroy_players();
+	void data_destroy(hash_t *table);
+	void player_destroy(player_t *player);
+	void team_destroy(team_t *team);
 #endif
 
 

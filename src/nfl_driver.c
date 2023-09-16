@@ -113,15 +113,14 @@ int main (int argc, char **argv) {
                 size_t len = 0;
                 getline(&curr_entry, &len, fp);
                 curr_entry[strcspn(curr_entry, "\n")] = '\0';
-                // char *p_curr_line = &curr_entry;
                 // TODO: make pointer copy to be able to free after strsep
                 player_t *player = player_create(curr_entry);
                 player_add_to_team(player, team_table);
                 player_insert(player, player_table);
-                // free(p_curr_line);
         }
         my_opts->team_table = team_table;
         my_opts->player_table = player_table;
+
 
         print_helper(my_opts);
         // print_roster(team_table, "1970Dallas Cowboys");
@@ -135,10 +134,15 @@ int main (int argc, char **argv) {
 // parse input and populate player struct
 // Use player.team to populate team struct
 // Add team struct to 
+        // data_destroy(player_table);
 OPTION_EXIT:
         fprintf(stderr, "./nfl: too many arguments\n");
-        free(my_opts);
 FILE_EXIT:
+        hashtable_destroy(my_opts);
+        // free(my_opts);
+        // hashtable_destroy(player_table);
+        // hashtable_destroy(team_table);
+        // data_destroy(player_table);
         fclose(fp);
         return 1;
 }
