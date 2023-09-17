@@ -62,6 +62,7 @@ EXIT:
 }
 
 static entry_t *create_entry(void *data, char *key) {
+        printf("Creating Entry with %s\n", key);
         entry_t *entry = calloc(1, sizeof(*entry));
         // TODO: ABC
         entry->data = data;
@@ -70,6 +71,7 @@ static entry_t *create_entry(void *data, char *key) {
 }
 
 bool hash_table_insert(hash_t *ht, char *key, void *data) {
+        printf("Inserting with %s\n", key);
         if (!ht || !key || !data) {
                 fprintf(stderr, "hash_table_insert\n");
                 return false;
@@ -89,7 +91,7 @@ bool hash_table_insert(hash_t *ht, char *key, void *data) {
                         ht->entries[try] = entry;
                         ht->curr_size += 1;
                         break;
-                }
+                } 
         }
         return true;
 }
@@ -184,19 +186,20 @@ void hashtable_destroy(l_opts *my_opts) {
         if (!my_opts) {
                 return;
         }
-
+        printf("Freeing data\n");
         hash_t *teams = my_opts->team_table;
         for (uint32_t i = 0; i < teams->max_cap; ++i) {
                 if (teams->entries[i]) {
-                        // printf("%s\n", teams->entries[i]->key);
-                        free(teams->entries[i]->key);
+                        printf("Found an entry\n");
                         team_destroy(teams->entries[i]->data);
+                        free(teams->entries[i]->key);
                 }
         }
 
         hash_t *players = my_opts->player_table;
         for (uint32_t i = 0; i < players->max_cap; ++i) {
                 if (players->entries[i]) {
+                        printf("Found a player\n");
                         player_destroy(players->entries[i]->data);
                         free(players->entries[i]->data);
                 }
@@ -207,7 +210,6 @@ void hashtable_destroy(l_opts *my_opts) {
 
         for (uint32_t i = 0; i < teams->max_cap; ++i) {
                 if (teams->entries[i]) {
-                // printf("Are we here?\n");
                         free(teams->entries[i]->data);
                 }
                 free(teams->entries[i]);

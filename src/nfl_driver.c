@@ -95,8 +95,8 @@ int main (int argc, char **argv) {
                 
         }
 
-        // FILE *fp = fopen("./test/test_data/data_4_entries.txt", "r");
-        FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
+        FILE *fp = fopen("./test/test_data/data_4_entries.txt", "r");
+        // FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
 
         if (!validate_file(fp)) {
                 goto FILE_EXIT;
@@ -107,16 +107,17 @@ int main (int argc, char **argv) {
                 goto FILE_EXIT;
         }
 
-        hash_t *player_table = hash_table_create(num_entries * 2, hash);
-        hash_t *team_table = hash_table_create(2000, hash);
-
+        // hash_t *player_table = hash_table_create(num_entries * 2, hash);
+        // hash_t *team_table = hash_table_create(2000, hash);
+        hash_t *player_table = hash_table_create(2, hash);
+        hash_t *team_table = hash_table_create(2, hash);
         for (uint16_t entry = 0; entry < num_entries; ++entry) {
                 char *curr_entry = NULL;
                 size_t len = 0;
                 getline(&curr_entry, &len, fp);
                 curr_entry[strcspn(curr_entry, "\n")] = '\0';
-                player_t *player = player_create(curr_entry);
-                player_add_to_team(player, team_table);
+                player_t *player = player_create(team_table, curr_entry);
+                // player_add_to_team(player, team_table);
                 player_insert(player, player_table);
         }
         my_opts->team_table = team_table;
@@ -124,10 +125,10 @@ int main (int argc, char **argv) {
 
 
         // print_helper(my_opts);
-        // print_roster(team_table, "1970Dallas Cowboys");
+        // print_roster(team_table, "2013Miami Dolphins");
         // print_player(my_opts->search_param1, player_table);
         // print_search_results(my_opts->search_param1, player_table);
-        print_teams(team_table);
+        // print_teams(team_table);
         // hash_table_print(player_table);
         // hash_table_print_team(team_table);
 

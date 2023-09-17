@@ -1,2 +1,2 @@
-AaitIs00	Isaako Aaitui	 	1987-01-25	UNLV	2013,Miami Dolphins
-abbotvin01	Vince Abbott	 	1959-05-31	Washington	2013,Miami Dolphins 1987,San Diego Chargers	1988,San Diego Chargers
+tIs00	Isaako Aaitui	 	1987-01-25	UNLV	2013,Miami Dolphins
+BrenSa01	Sam Brenner	lg	1990-04-27	Utah	2013,Miami Dolphins	2015,Miami Dolphins

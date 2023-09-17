@@ -25,15 +25,27 @@ typedef struct team_t {
         llist_t *roster;
 }team_t;
 
-static team_t * team_create(char * curr_team) {
+static team_t * team_create(char *year, char *name, player_t *player) {
         //BUG: Memory leak here
         team_t *team = calloc(1, sizeof(*team));
-        team->year = strsep(&curr_team, ",");
-        team->team_name = strsep(&curr_team, "\t");
+        team->year = year;
+        team->team_name = name;
+        team->roster = llist_create();
+        llist_enqueue(team->roster, player);
+        // team->year = strsep(&curr_team, ",");
+        // team->team_name = strsep(&curr_team, "\t");
         return team; 
 }
 
-player_t * player_create(char *current) {
+// static team_t * team_create(char * curr_team) {
+//         //BUG: Memory leak here
+//         team_t *team = calloc(1, sizeof(*team));
+//         team->year = strsep(&curr_team, ",");
+//         team->team_name = strsep(&curr_team, "\t");
+//         return team; 
+// }
+
+player_t * player_create(hash_t *team_table, char *current) {
         
         player_t *player = calloc(1, sizeof(*player));
         if (!player) {
@@ -41,6 +53,7 @@ player_t * player_create(char *current) {
                 errno = 0;
                 goto EXIT;
         }
+        printf("Player_create called with %s\n", current);
 
         player->id = strsep(&current, "\t");
         player->name = strsep(&current, "\t");
@@ -49,11 +62,29 @@ player_t * player_create(char *current) {
         player->college = strsep(&current, "\t");
 
         char *curr_team = NULL;
+        // printf("Current: %s\n", current);
         curr_team = strsep(&current, "\t");
+        // printf("Current team: %s\n", curr_team);
         player->teams = llist_create();
         while (curr_team) {
-                team_t *team = team_create(curr_team);
-                llist_enqueue(player->teams, team);
+                char *year = strsep(&curr_team, ",");
+                char *name = curr_team;
+                // char *name = strsep(&curr_team, "\t");
+                size_t len = strlen(name);
+                char *key = calloc(len + 5, sizeof(char));
+                memcpy(key, year, 4);
+                strncat(key, name, len);
+                team_t *tmp = find(team_table, key);
+                if (tmp) {
+                        printf("%s already exists\n", key);
+                        llist_enqueue(player->teams, tmp);
+                        llist_enqueue(tmp->roster, player);
+                        free(key);
+                } else {
+                        printf("Inserting %s\n", key);
+                        team_t *team = team_create(year, name, player);
+                        hash_table_insert(team_table, key, team);
+                }
                 player->num_teams += 1;
                 curr_team = strsep(&current, "\t");
         }        
