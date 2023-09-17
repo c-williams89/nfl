@@ -25,14 +25,16 @@ typedef struct team_t {
         llist_t *roster;
 }team_t;
 
-static team_t * team_create(char * curr_team) {
+static team_t * team_create(char *year, char *name, player_t *player) {
         team_t *team = calloc(1, sizeof(*team));
-        team->year = strsep(&curr_team, ",");
-        team->team_name = strsep(&curr_team, "\t");
+        team->year = year;
+        team->team_name = name;
+        team->roster = llist_create();
+        llist_enqueue(team->roster, player);
         return team; 
 }
 
-player_t * player_create(char *current) {
+player_t * player_create(hash_t *team_table, char *current) {
         
         player_t *player = calloc(1, sizeof(*player));
         if (!player) {
@@ -51,8 +53,21 @@ player_t * player_create(char *current) {
         curr_team = strsep(&current, "\t");
         player->teams = llist_create();
         while (curr_team) {
-                team_t *team = team_create(curr_team);
-                llist_enqueue(player->teams, team);
+                char *year = strsep(&curr_team, ",");
+                char *name = curr_team;
+                size_t len = strlen(name);
+                char *key = calloc(len + 5, sizeof(char));
+                memcpy(key, year, 4);
+                strncat(key, name, len);
+                team_t *tmp = find(team_table, key);
+                if (tmp) {
+                        llist_enqueue(player->teams, tmp);
+                        llist_enqueue(tmp->roster, player);
+                        free(key);
+                } else {
+                        team_t *team = team_create(year, name, player);
+                        hash_table_insert(team_table, key, team);
+                }
                 player->num_teams += 1;
                 curr_team = strsep(&current, "\t");
         }        
@@ -66,10 +81,13 @@ bool player_insert(player_t *player, hash_t *ht) {
         return true;
 }
 
+// TODO: Unused function. Confirm all works through BFS then remove
+/*
 static bool team_insert(team_t *team, hash_t *ht, char *key, player_t *player) {
         team_t *tmp = (team_t *)find(ht, key);
 
         if (tmp) {
+                team = tmp;
                 llist_enqueue(tmp->roster, player);
         } else {
                 team->roster = llist_create();
@@ -78,7 +96,10 @@ static bool team_insert(team_t *team, hash_t *ht, char *key, player_t *player) {
         }
         return true;
 }
+*/
 
+// TODO: Unused function. Confirm all works through BFS then remove
+/*
 void player_add_to_team(player_t *player, hash_t *team_table) {
         team_t *tmp = NULL;
         for (int i = 0; i < player->num_teams; ++i) {
@@ -90,8 +111,10 @@ void player_add_to_team(player_t *player, hash_t *team_table) {
                 strncat(key, tmp->team_name, len);
 
                 team_insert(tmp, team_table, key, player);
+                // free(key);
         }
 }
+*/
 
 int compare_player (player_t *player, char *val){
         if (0 == strncmp(player->name, val, strlen(player->name))) {
@@ -102,7 +125,6 @@ int compare_player (player_t *player, char *val){
 
 int compare_fields (player_t *player, char *val) {
         // Will hand a player and compare val against player name or college
-        // player_t *tmp = NULL;
         if (strstr(player->name, val) || strstr(player->college, val)) {
                 return 1;
         }
@@ -154,4 +176,24 @@ void print_roster (hash_t *team_table, char *key) {
                 player_t *player = (player_t *)llist_dequeue(team->roster);
                 printf("\t%s\t%s\t%s\t%s\n", player->id, player->name, player->position, player->college);
         }
+}
+
+// void destroy_players() {
+//         player_t *player;
+//         free(player->id);
+//         // llist_destroy on player-teams. only nodes and list, not node data
+//         llist_destroy(&(player)->teams);
+// }
+// void data_destroy (hash_t *table) {
+//         hashtable_destroy(table, destroy_players);
+// }
+
+void player_destroy(player_t *player) {
+        llist_destroy(player->teams);
+        free(player->id);
+}
+
+void team_destroy(team_t *team) {
+        // free(team->year);
+        llist_destroy(team->roster);       
 }

@@ -33,7 +33,7 @@ int main (int argc, char **argv) {
                         {"search", required_argument, NULL, 's'},
                         {"stats", required_argument, NULL, 'S'},
                         {"roster", required_argument, NULL, 'r'},
-                        {"teams", required_argument, NULL, 't'},
+                        {"teams", no_argument, NULL, 't'},
                         {"distance", required_argument, NULL, 'd'},
                         {0, 0, 0, 0}
                 };
@@ -95,7 +95,9 @@ int main (int argc, char **argv) {
                 
         }
 
+        // FILE *fp = fopen("./test/test_data/data_4_entries.txt", "r");
         FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
+
         if (!validate_file(fp)) {
                 goto FILE_EXIT;
         }
@@ -107,38 +109,33 @@ int main (int argc, char **argv) {
 
         hash_t *player_table = hash_table_create(num_entries * 2, hash);
         hash_t *team_table = hash_table_create(2000, hash);
-
+        // hash_t *player_table = hash_table_create(2, hash);
+        // hash_t *team_table = hash_table_create(2, hash);
         for (uint16_t entry = 0; entry < num_entries; ++entry) {
                 char *curr_entry = NULL;
                 size_t len = 0;
                 getline(&curr_entry, &len, fp);
                 curr_entry[strcspn(curr_entry, "\n")] = '\0';
-                // char *p_curr_line = &curr_entry;
-                // TODO: make pointer copy to be able to free after strsep
-                player_t *player = player_create(curr_entry);
-                player_add_to_team(player, team_table);
+                player_t *player = player_create(team_table, curr_entry);
+                // player_add_to_team(player, team_table);
                 player_insert(player, player_table);
-                // free(p_curr_line);
         }
         my_opts->team_table = team_table;
         my_opts->player_table = player_table;
 
-        print_helper(my_opts);
-        // print_roster(team_table, "1970Dallas Cowboys");
+
+        // print_helper(my_opts);
+        // print_roster(team_table, "2013Miami Dolphins");
         // print_player(my_opts->search_param1, player_table);
         // print_search_results(my_opts->search_param1, player_table);
-        // print_teams(team_table);
+        print_teams(team_table);
         // hash_table_print(player_table);
         // hash_table_print_team(team_table);
-
-// Create player hashtable with known number of entries * 2
-// parse input and populate player struct
-// Use player.team to populate team struct
-// Add team struct to 
 OPTION_EXIT:
         fprintf(stderr, "./nfl: too many arguments\n");
-        free(my_opts);
 FILE_EXIT:
+        hashtable_destroy(my_opts);
+        free(my_opts);
         fclose(fp);
         return 1;
 }

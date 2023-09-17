@@ -3,10 +3,12 @@
 #include <stdbool.h>
 #include <errno.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "hashtable.h"
 #include "player.h"
 #include "llist.h"
+#include "long_opts_helper.h"
 
 #define LOAD(x) ((x * 3) / 4)
 
@@ -80,58 +82,21 @@ bool hash_table_insert(hash_t *ht, char *key, void *data) {
         entry_t *entry = create_entry(data, key);
 
         uint64_t index = (ht->hash_function(key) % ht->max_cap);
-        for (int i = 0; i < ht->max_cap; ++i) {
+        for (uint32_t i = 0; i < ht->max_cap; ++i) {
                 uint32_t try = (i + index) % ht->max_cap;
                 
                 if (!ht->entries[try] || ht->entries[try]->b_to_delete) {
                         ht->entries[try] = entry;
                         ht->curr_size += 1;
                         break;
-                }
+                } 
         }
         return true;
 }
 
-/*
- The following are debugging print statements and can be removed later
-void hash_table_print(hash_t *ht) {
-        for (int i = 0; i < ht->max_cap; ++i) {
-                printf("index %d:\t", i);
-                if (ht->entries[i] && (!ht->entries[i]->b_to_delete)) {
-                        player_t *player = (player_t *)ht->entries[i]->data;
-                        printf("%s %s %s\n", player->id, player->name, player->college);
-                        for (int i = 0; i < player->num_teams; ++i) {
-                                team_t *team = llist_peek(player->teams, i);
-                                printf("\t%s, %s\n", team->year, team->team_name);
-                        }
-                } else {
-                        printf("\t-------------------\n");
-                }
-        }
-}
-
-void hash_table_print_team(hash_t *ht) {
-        for (int i = 0; i < ht->max_cap; ++i) {
-                if (ht->entries[i] && (!ht->entries[i]->b_to_delete)) {
-                printf("index %d:\t", i);
-                        team_t *team = (team_t *)ht->entries[i]->data;
-                        printf("%s %s\n", team->year, team->team_name);
-                        while (!llist_is_empty(team->roster)) {
-                                player_t *curr_player = (player_t *)llist_dequeue(team->roster);
-                                printf("\t\t%s, %s\n", curr_player->id, curr_player->name);
-                        }
-                printf("\n");
-                } else {
-                        printf("\t-------------------\n");
-                }
-        }
-        printf("Size: %d\n", ht->curr_size);
-}
-*/
-
 void *find(hash_t * table, char *key) {
         uint64_t index = (table->hash_function(key) % table->max_cap);
-        for (int i = 0; i < table->max_cap; ++i) {
+        for (uint32_t i = 0; i < table->max_cap; ++i) {
                 int try = (i + index) % table->max_cap;
                 if (table->entries[try]) {
                         if (0 == (strncmp(table->entries[try]->key, key, strlen(key)))) {
@@ -145,7 +110,7 @@ void *find(hash_t * table, char *key) {
 
 void *find_no_key(hash_t *table, char *val, comp_f compare) {
         void *data = NULL;
-        for (int i = 0; i < table->max_cap; ++i) {
+        for (uint32_t i = 0; i < table->max_cap; ++i) {
                 if (table->entries[i]) {
                         if (compare(table->entries[i]->data, val)) {
                                 data = table->entries[i]->data;
@@ -158,7 +123,7 @@ void *find_no_key(hash_t *table, char *val, comp_f compare) {
 
 llist_t *find_matches(hash_t *table, char *val, comp_f compare) {
         llist_t *search_results = llist_create();
-        for (int i = 0; i < table->max_cap; ++i) {
+        for (uint32_t i = 0; i < table->max_cap; ++i) {
                 if (table->entries[i]) {
                         if (compare(table->entries[i]->data, val)) {
                                 llist_enqueue(search_results, table->entries[i]->data);
@@ -170,11 +135,46 @@ llist_t *find_matches(hash_t *table, char *val, comp_f compare) {
 
 llist_t *find_teams(hash_t *table) {
         llist_t *team_results = llist_create();
-        for (int i = 0; i < table->max_cap; ++i) {
+        for (uint32_t i = 0; i < table->max_cap; ++i) {
                 if (table->entries[i]) {
                         llist_enqueue(team_results, table->entries[i]->data);
                 }
         }
 
         return team_results;
+}
+
+void hashtable_destroy(l_opts *my_opts) {
+        if (!my_opts) {
+                return;
+        }
+
+        hash_t *teams = my_opts->team_table;
+        for (uint32_t i = 0; i < teams->max_cap; ++i) {
+                if (teams->entries[i]) {
+                        team_destroy(teams->entries[i]->data);
+                        free(teams->entries[i]->key);
+                }
+        }
+
+        hash_t *players = my_opts->player_table;
+        for (uint32_t i = 0; i < players->max_cap; ++i) {
+                if (players->entries[i]) {
+                        player_destroy(players->entries[i]->data);
+                        free(players->entries[i]->data);
+                }
+                free(players->entries[i]);
+        }
+        free(players->entries);
+        free(players);
+
+        for (uint32_t i = 0; i < teams->max_cap; ++i) {
+                if (teams->entries[i]) {
+                        free(teams->entries[i]->data);
+                }
+                free(teams->entries[i]);
+        }
+        free(teams->entries);
+        free(teams);
+
 }
