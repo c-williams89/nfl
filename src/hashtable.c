@@ -62,7 +62,6 @@ EXIT:
 }
 
 static entry_t *create_entry(void *data, char *key) {
-        printf("Creating Entry with %s\n", key);
         entry_t *entry = calloc(1, sizeof(*entry));
         // TODO: ABC
         entry->data = data;
@@ -71,7 +70,6 @@ static entry_t *create_entry(void *data, char *key) {
 }
 
 bool hash_table_insert(hash_t *ht, char *key, void *data) {
-        printf("Inserting with %s\n", key);
         if (!ht || !key || !data) {
                 fprintf(stderr, "hash_table_insert\n");
                 return false;
@@ -146,51 +144,14 @@ llist_t *find_teams(hash_t *table) {
         return team_results;
 }
 
-// void hashtable_destroy(hash_t *table, del_f delete) {
-//         if (!table) {
-//                 return;
-//         }
-//         for (uint32_t i = 0; i < table->max_cap; ++i) {
-//                 if (table->entries[i]) {
-//                         delete(table->entries[i]->data);
-//                         free(table->entries[i]);
-//                 }
-//         }
-//         free(table);
-// }
-
-// void hashtable_destroy(hash_t *table) {
-//         if (!table) {
-//                 return;
-//         }
-//         for (uint32_t i = 0; i < table->max_cap; ++i) {
-//                 if (table->entries[i]) {
-//                         if (!isdigit(table->entries[i]->key[0])) {
-//                                 player_destroy(table->entries[i]->data);
-//                         } else {
-//                                 team_destroy(table->entries[i]->data);
-//                         }
-//                         // free(table->entries[i]->key);
-//                         free(table->entries[i]->data);
-//                         // delete(table->entries[i]->data);
-//                         // free(table->entries[i]);
-//                 }
-//                 // free(table->entries[i]);
-                
-//         }
-//         free(table->entries);
-//         free(table);
-// }
-
 void hashtable_destroy(l_opts *my_opts) {
         if (!my_opts) {
                 return;
         }
-        printf("Freeing data\n");
+
         hash_t *teams = my_opts->team_table;
         for (uint32_t i = 0; i < teams->max_cap; ++i) {
                 if (teams->entries[i]) {
-                        printf("Found an entry\n");
                         team_destroy(teams->entries[i]->data);
                         free(teams->entries[i]->key);
                 }
@@ -199,7 +160,6 @@ void hashtable_destroy(l_opts *my_opts) {
         hash_t *players = my_opts->player_table;
         for (uint32_t i = 0; i < players->max_cap; ++i) {
                 if (players->entries[i]) {
-                        printf("Found a player\n");
                         player_destroy(players->entries[i]->data);
                         free(players->entries[i]->data);
                 }

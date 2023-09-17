@@ -26,24 +26,13 @@ typedef struct team_t {
 }team_t;
 
 static team_t * team_create(char *year, char *name, player_t *player) {
-        //BUG: Memory leak here
         team_t *team = calloc(1, sizeof(*team));
         team->year = year;
         team->team_name = name;
         team->roster = llist_create();
         llist_enqueue(team->roster, player);
-        // team->year = strsep(&curr_team, ",");
-        // team->team_name = strsep(&curr_team, "\t");
         return team; 
 }
-
-// static team_t * team_create(char * curr_team) {
-//         //BUG: Memory leak here
-//         team_t *team = calloc(1, sizeof(*team));
-//         team->year = strsep(&curr_team, ",");
-//         team->team_name = strsep(&curr_team, "\t");
-//         return team; 
-// }
 
 player_t * player_create(hash_t *team_table, char *current) {
         
@@ -53,7 +42,6 @@ player_t * player_create(hash_t *team_table, char *current) {
                 errno = 0;
                 goto EXIT;
         }
-        printf("Player_create called with %s\n", current);
 
         player->id = strsep(&current, "\t");
         player->name = strsep(&current, "\t");
@@ -62,26 +50,21 @@ player_t * player_create(hash_t *team_table, char *current) {
         player->college = strsep(&current, "\t");
 
         char *curr_team = NULL;
-        // printf("Current: %s\n", current);
         curr_team = strsep(&current, "\t");
-        // printf("Current team: %s\n", curr_team);
         player->teams = llist_create();
         while (curr_team) {
                 char *year = strsep(&curr_team, ",");
                 char *name = curr_team;
-                // char *name = strsep(&curr_team, "\t");
                 size_t len = strlen(name);
                 char *key = calloc(len + 5, sizeof(char));
                 memcpy(key, year, 4);
                 strncat(key, name, len);
                 team_t *tmp = find(team_table, key);
                 if (tmp) {
-                        printf("%s already exists\n", key);
                         llist_enqueue(player->teams, tmp);
                         llist_enqueue(tmp->roster, player);
                         free(key);
                 } else {
-                        printf("Inserting %s\n", key);
                         team_t *team = team_create(year, name, player);
                         hash_table_insert(team_table, key, team);
                 }
@@ -98,6 +81,8 @@ bool player_insert(player_t *player, hash_t *ht) {
         return true;
 }
 
+// TODO: Unused function. Confirm all works through BFS then remove
+/*
 static bool team_insert(team_t *team, hash_t *ht, char *key, player_t *player) {
         team_t *tmp = (team_t *)find(ht, key);
 
@@ -111,16 +96,16 @@ static bool team_insert(team_t *team, hash_t *ht, char *key, player_t *player) {
         }
         return true;
 }
+*/
 
+// TODO: Unused function. Confirm all works through BFS then remove
+/*
 void player_add_to_team(player_t *player, hash_t *team_table) {
         team_t *tmp = NULL;
         for (int i = 0; i < player->num_teams; ++i) {
                 tmp = (team_t *)llist_peek(player->teams, i);
                 
                 size_t len = strlen(tmp->team_name);
-                //BUG: memory leak here
-                // Check key here against team table before anything, free if there
-                // and repoint to that team
                 char *key = calloc(len + 5, sizeof(char));
                 memcpy(key, tmp->year, 4);
                 strncat(key, tmp->team_name, len);
@@ -129,6 +114,7 @@ void player_add_to_team(player_t *player, hash_t *team_table) {
                 // free(key);
         }
 }
+*/
 
 int compare_player (player_t *player, char *val){
         if (0 == strncmp(player->name, val, strlen(player->name))) {
