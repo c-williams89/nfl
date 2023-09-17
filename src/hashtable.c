@@ -188,7 +188,7 @@ void hashtable_destroy(l_opts *my_opts) {
         hash_t *teams = my_opts->team_table;
         for (uint32_t i = 0; i < teams->max_cap; ++i) {
                 if (teams->entries[i]) {
-                        printf("found teams entry\n");
+                        // printf("%s\n", teams->entries[i]->key);
                         free(teams->entries[i]->key);
                         team_destroy(teams->entries[i]->data);
                 }
@@ -207,6 +207,7 @@ void hashtable_destroy(l_opts *my_opts) {
 
         for (uint32_t i = 0; i < teams->max_cap; ++i) {
                 if (teams->entries[i]) {
+                // printf("Are we here?\n");
                         free(teams->entries[i]->data);
                 }
                 free(teams->entries[i]);

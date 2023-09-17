@@ -71,6 +71,7 @@ static bool team_insert(team_t *team, hash_t *ht, char *key, player_t *player) {
         team_t *tmp = (team_t *)find(ht, key);
 
         if (tmp) {
+                team = tmp;
                 llist_enqueue(tmp->roster, player);
         } else {
                 team->roster = llist_create();
@@ -87,6 +88,8 @@ void player_add_to_team(player_t *player, hash_t *team_table) {
                 
                 size_t len = strlen(tmp->team_name);
                 //BUG: memory leak here
+                // Check key here against team table before anything, free if there
+                // and repoint to that team
                 char *key = calloc(len + 5, sizeof(char));
                 memcpy(key, tmp->year, 4);
                 strncat(key, tmp->team_name, len);
