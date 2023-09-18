@@ -25,6 +25,8 @@ uint64_t hash(char *key) {
 int main (int argc, char **argv) {
         int c;
         l_opts *my_opts = calloc(1, sizeof(l_opts));
+        FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
+        // char *file = "./test/test_data/nfldata.txt";
 
         while (1) { //TODO: Figure out better way to write this
                 int option_index = 0;
@@ -35,18 +37,15 @@ int main (int argc, char **argv) {
                         {"roster", required_argument, NULL, 'r'},
                         {"teams", no_argument, NULL, 't'},
                         {"distance", required_argument, NULL, 'd'},
+                        // {"file", required_argument, NULL, 'f'},
                         {0, 0, 0, 0}
                 };
-                c = getopt_long(argc, argv, "", long_options, &option_index);
+                c = getopt_long(argc, argv, "f:", long_options, &option_index);
                 if (-1 == c) {
                         break;
                 }
 
                 switch (c) {
-                        case 0:
-                                break;
-                        case 1:
-                                break;
                         case 'p':
                                 if (my_opts->option) {
                                         goto OPTION_EXIT;
@@ -90,20 +89,21 @@ int main (int argc, char **argv) {
                                 }
                                 ++optind;
                                 break;
+                        case 'f':
+                                fclose(fp);
+                                fp = fopen(optarg, "r");
+                                if (!fp) {
+                                        goto OPTION_EXIT;
+                                }
+                                break;
                         case '?':
                                 goto FILE_EXIT;
                         case ':':
                                 goto FILE_EXIT;
                         default:
                                 break;
-
-                }
-                
+                }  
         }
-
-        // FILE *fp = fopen("./test/test_data/data_4_entries.txt", "r");
-        FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
-        // FILE *fp = fopen("./test/test_data/nfldata.tsv", "r");
 
         if (!validate_file(fp)) {
                 goto FILE_EXIT;
@@ -116,31 +116,23 @@ int main (int argc, char **argv) {
 
         hash_t *player_table = hash_table_create(num_entries * 2, hash);
         hash_t *team_table = hash_table_create(2000, hash);
-        // hash_t *player_table = hash_table_create(2, hash);
-        // hash_t *team_table = hash_table_create(2, hash);
         for (uint16_t entry = 0; entry < num_entries; ++entry) {
                 char *curr_entry = NULL;
                 size_t len = 0;
                 getline(&curr_entry, &len, fp);
                 curr_entry[strcspn(curr_entry, "\n")] = '\0';
                 player_t *player = player_create(team_table, curr_entry);
-                // player_add_to_team(player, team_table);
                 player_insert(player, player_table);
         }
         my_opts->team_table = team_table;
         my_opts->player_table = player_table;
 
-
         print_helper(my_opts);
-        // print_roster(team_table, "1981Cleveland Browns");
-        // print_player(my_opts->search_param1, player_table);
-        // print_search_results(my_opts->search_param1, player_table);
-        // print_teams(team_table);
-OPTION_EXIT:
-        // fprintf(stderr, "./nfl: too many arguments\n");
-FILE_EXIT:
         hashtable_destroy(my_opts);
-        free(my_opts);
+
+FILE_EXIT:
         fclose(fp);
+OPTION_EXIT:
+        free(my_opts);
         return 1;
 }

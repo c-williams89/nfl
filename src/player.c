@@ -171,7 +171,6 @@ void player_distance(hash_t *player_table, char *start, char *end) {
         }
 }
 
-
 void player_destroy(player_t *player) {
         llist_destroy(player->teams);
         free(player->id);
@@ -203,10 +202,16 @@ static void bfs(player_t *player) {
                         }
                 }
         }   
-
+        printf("Network stats for %s\n", player->name);
+        int total_connected = 0;
+        float avg_sep = 0.0;
         for (int i = 0; i < NUM_COHORTS; ++i) {
-                printf("%d -- %d cohorts\n", i, cohorts[i]);
+                total_connected += cohorts[i];
+                avg_sep += (i * cohorts[i]);
+                printf("%d -- %d cohort%s", i, cohorts[i], (i == 0)? "\n": "s\n");
         }
+        avg_sep = avg_sep / total_connected;
+        printf("Average separation %.6f\n", avg_sep);
 }
 
 static bool calc_distance(player_t *start, player_t *end) {
