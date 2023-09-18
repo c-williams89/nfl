@@ -66,15 +66,18 @@ player_t * player_create(hash_t *team_table, char *current) {
                 char *year = strsep(&curr_team, ",");
                 char *name = curr_team;
 
-                team_t *tmp = find(team_table, key);
+                team_t *tmp = (team_t*)find(team_table, key);
 
                 if (tmp) {
-                        llist_enqueue(player->teams, tmp);
                         llist_enqueue(tmp->roster, player);
+                        llist_enqueue(player->teams, tmp);
+
                         free(key);
                 } else {
-                        team_t *team = team_create(year, name, player);
-                        hash_table_insert(team_table, key, team);
+                        tmp = team_create(year, name, player);
+                        hash_table_insert(team_table, key, tmp);
+                        // team_t *team = team_create(year, name, player);
+                        // hash_table_insert(team_table, key, team);
                 }
                 player->num_teams += 1;
                 curr_team = strsep(&current, "\t");
@@ -181,21 +184,35 @@ static void bfs(player_t *player) {
         int cohorts[NUM_COHORTS] = { 1, 0 };
         llist_t *cohort_queue = llist_create();
         player->level = 0;
-        player_t *start = player;
+        // player_t *start = player;
+        player->parent = player;
         llist_enqueue(cohort_queue, player);
 
         while (!llist_is_empty(cohort_queue)) {
-                player_t *player = (player_t *)llist_dequeue(cohort_queue);
-                while (!llist_is_empty(player->teams)) {
-                        team_t *team = (team_t *)llist_dequeue(player->teams);
+                player_t *curr = (player_t *)llist_dequeue(cohort_queue);
+                while (!llist_is_empty(curr->teams)) {
+                        team_t *team = (team_t *)llist_dequeue(curr->teams);
                         while (!llist_is_empty(team->roster)) {
                                 player_t *next = (player_t *)llist_dequeue(team->roster);
-                                if (next->level || (next == start)) {
+                                // if (next->level || (next == player)) {
+                                //         continue;
+                                //         printf("Found a current entry\n");
+                                // } else {
+                                //         next->level = (curr->level + 1);
+                                //         cohorts[next->level] += 1;
+                                //         llist_enqueue(cohort_queue, next);
+                                // }
+                                if (next->parent || next == player) {
                                         continue;
+                                } else{
+                                        next->level = (curr->level + 1);
+                                        cohorts[next->level] += 1;
+                                        next->parent = team;
+                                        llist_enqueue(cohort_queue, next);
+
                                 }
-                                next->level = (player->level) + 1;
-                                cohorts[next->level] += 1;
-                                llist_enqueue(cohort_queue, next);
+                                
+                                // printf("level: %d\n", next->level);
                         }
                 }
         }   
@@ -248,5 +265,15 @@ static void print_distance(player_t *end) {
                 player_t *parent = team->parent;
                 printf("%s played for %s in %s with %s\n", player->name, team->team_name, team->year, parent->name);
                 player = parent;
+        }
+}
+
+void find_small_teams(hash_t *team_table) {
+        llist_t *teams = find_smaller_teams(team_table);
+        while (!llist_is_empty(teams)) {
+                team_t *team = (team_t *)llist_dequeue(teams);
+                if (llist_get_size(team->roster) == 31) {
+                        printf("team: %s %s\n", team->year, team->team_name);
+                }
         }
 }

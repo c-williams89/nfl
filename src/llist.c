@@ -124,3 +124,7 @@ void llist_destroy(llist_t * llist)
 	llist->tail = NULL;
 	free(llist);
 }
+
+int llist_get_size(llist_t *llist) {
+	return llist->size;
+}

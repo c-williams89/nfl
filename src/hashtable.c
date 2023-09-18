@@ -180,3 +180,13 @@ void hashtable_destroy(l_opts *my_opts) {
         free(teams);
 
 }
+
+llist_t * find_smaller_teams(hash_t *team_table) {
+        llist_t *teams = llist_create();
+        for (int i = 0; i < team_table->max_cap; ++i) {
+                if (team_table->entries[i]) {
+                        llist_enqueue(teams, team_table->entries[i]->data);
+                }
+        }
+        return teams;
+}

@@ -18,6 +18,7 @@
 	void team_destroy(team_t *team);
 	void player_stats(hash_t *player_table, char *name);
 	void player_distance(hash_t *player_table, char *start, char *end);
+	void find_small_teams(hash_t *team_table);
 #endif
 
 

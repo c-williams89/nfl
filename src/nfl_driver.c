@@ -39,12 +39,14 @@ int main (int argc, char **argv) {
                         {"distance", required_argument, NULL, 'd'},
                         {0, 0, 0, 0}
                 };
-                c = getopt_long(argc, argv, "f:", long_options, &option_index);
+                c = getopt_long(argc, argv, "-:f:", long_options, &option_index);
                 if (-1 == c) {
                         break;
                 }
 
                 switch (c) {
+                        case 1:
+                                break;
                         case 'p':
                                 if (my_opts->option) {
                                         goto OPTION_EXIT;
@@ -125,7 +127,7 @@ int main (int argc, char **argv) {
         }
         my_opts->team_table = team_table;
         my_opts->player_table = player_table;
-
+        // find_small_teams(my_opts->team_table);
         print_helper(my_opts);
         hashtable_destroy(my_opts);
 
