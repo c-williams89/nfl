@@ -62,15 +62,12 @@ player_t * player_create(hash_t *team_table, char *current) {
         curr_team = strsep(&current, "\t");
         player->teams = llist_create();
         while (curr_team) {
+                char *key = strdup(curr_team);
                 char *year = strsep(&curr_team, ",");
                 char *name = curr_team;
-                size_t len = strlen(name);
-                // TODO: Don't Calloc key, just grab whole string '1970,Miami Dolphins'
-                //  And use as the key.
-                char *key = calloc(len + 5, sizeof(char));
-                memcpy(key, year, 4);
-                strncat(key, name, len);
+
                 team_t *tmp = find(team_table, key);
+
                 if (tmp) {
                         llist_enqueue(player->teams, tmp);
                         llist_enqueue(tmp->roster, player);

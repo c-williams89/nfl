@@ -27,8 +27,9 @@ void print_helper (l_opts *my_opts) {
 			break;
                 case 'r':
 		 	len = strlen(my_opts->search_param1);
-                	char *key = calloc(len + 5, sizeof(char));
+                	char *key = calloc(len + 6, sizeof(char));
                 	memcpy(key, my_opts->search_param2, 4);
+			key[4] = ',';
                 	strncat(key, my_opts->search_param1, len);
 			print_roster(my_opts->team_table, key);
 			free(key);

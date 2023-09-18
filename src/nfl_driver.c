@@ -37,7 +37,6 @@ int main (int argc, char **argv) {
                         {"roster", required_argument, NULL, 'r'},
                         {"teams", no_argument, NULL, 't'},
                         {"distance", required_argument, NULL, 'd'},
-                        // {"file", required_argument, NULL, 'f'},
                         {0, 0, 0, 0}
                 };
                 c = getopt_long(argc, argv, "f:", long_options, &option_index);
