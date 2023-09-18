@@ -20,6 +20,8 @@ typedef struct entry_t {
         char *key;
 } entry_t;
 
+// HACK: Re-write entries to be a single pointer, each index is an entry, rather
+//  than a pointer to an entry
 typedef struct hash_t {
         entry_t **entries;
         hash_f hash_function;

@@ -26,6 +26,7 @@ void print_helper (l_opts *my_opts) {
 			break;
 		case 'S':
 			player_stats(my_opts->player_table, my_opts->search_param1);
+			break;
 		default:
 			break;
         }

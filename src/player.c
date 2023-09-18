@@ -17,6 +17,7 @@ typedef struct player_t {
         char *college;
         llist_t *teams;
         int num_teams;
+        int level;
 }player_t;
 
 typedef struct team_t {
@@ -24,6 +25,8 @@ typedef struct team_t {
         char *year;
         llist_t *roster;
 }team_t;
+
+enum { NUM_COHORTS = 10};
 
 static void bfs(player_t *player);
 
@@ -58,6 +61,8 @@ player_t * player_create(hash_t *team_table, char *current) {
                 char *year = strsep(&curr_team, ",");
                 char *name = curr_team;
                 size_t len = strlen(name);
+                // TODO: Don't Calloc key, just grab whole string '1970,Miami Dolphins'
+                //  And use as the key.
                 char *key = calloc(len + 5, sizeof(char));
                 memcpy(key, year, 4);
                 strncat(key, name, len);
@@ -146,12 +151,11 @@ void print_roster (hash_t *team_table, char *key) {
 }
 
 void player_stats(hash_t *player_table, char *name) {
-        // Does this function handle name or ID, or both?
-        player_t *player = find_no_key(player_table, name, compare_player);
-        if (player) {
-                bfs(player);
-        }
-
+        player_t *player = find_no_key(player_table, name, (comp_f)compare_player);
+        // if (player) {
+        //         bfs(player);
+        // }
+        bfs(player);
 }
 
 
@@ -165,5 +169,56 @@ void team_destroy(team_t *team) {
 }
 
 static void bfs(player_t *player) {
-        int cohorts[10] = { 1, 0 };
+        //PSEUDO: enqueue the starting player
+        // While llist isn't empty
+        // Dequeue from llist
+        // while player.team list isnt empt
+        // dequeue player from player.teams
+        // enqueue to llinked list
+        // increment cohort index
+
+        int cohorts[NUM_COHORTS] = { 1, 0 };
+        // int cohorts[NUM_COHORTS] = { 0 };
+
+        llist_t *cohort_queue = llist_create();
+        player->level = 1;
+        llist_enqueue(cohort_queue, player);
+        uint16_t level = 1;
+        player_t *next_player = NULL;
+        // player_t *new_level = NULL;
+
+        while (!llist_is_empty(player->teams)) {
+                team_t *curr_team = (team_t*)llist_dequeue(player->teams);
+                while (!llist_is_empty(curr_team->roster)) {
+                        next_player = (player_t *)llist_dequeue(curr_team->roster);
+                        if (!next_player->level) {
+                                next_player->level = level;
+                                llist_enqueue(cohort_queue, next_player);
+                                cohorts[level] += 1;
+                        }
+                }
+        }
+
+        // while (!llist_is_empty(cohort_queue)) {
+        for (int i = 2; i < NUM_COHORTS; ++i) {
+                for (int j = 0; j < cohorts[i - 1]; ++j) {
+                        player_t *curr_player = (player_t *)llist_dequeue(cohort_queue);
+                        while (!llist_is_empty(curr_player->teams)) {
+                                team_t *curr_team = (team_t *)llist_dequeue(curr_player->teams);
+
+                                while (!llist_is_empty(curr_team->roster)) {
+                                        next_player = (player_t *)llist_dequeue(curr_team->roster);
+                                        if (!next_player->level) {
+                                                llist_enqueue(cohort_queue, next_player);
+                                                next_player->level = level;
+                                                cohorts[i] += 1;
+                                        }
+                                }
+                        }
+                }
+        }
+
+        for (int i = 0; i < NUM_COHORTS; ++i) {
+                printf("%d -- %d cohorts\n", i, cohorts[i]);
+        }
 }
