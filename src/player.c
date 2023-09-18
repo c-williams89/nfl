@@ -31,8 +31,8 @@ typedef struct team_t {
 enum { NUM_COHORTS = 10};
 
 static void bfs(player_t *player);
-static llist_t * calc_distance(player_t *start, player_t *end);
-static void print_distance(llist_t *queue, player_t *start);
+static bool calc_distance(player_t *start, player_t *end);
+static void print_distance(player_t *start);
 
 static team_t * team_create(char *year, char *name, player_t *player) {
         team_t *team = calloc(1, sizeof(*team));
@@ -166,8 +166,9 @@ void player_stats(hash_t *player_table, char *name) {
 void player_distance(hash_t *player_table, char *start, char *end) {
         player_t *player1 = find_no_key(player_table, start, (comp_f)compare_player);
         player_t *player2 = find_no_key(player_table, end, (comp_f)compare_player);
-        llist_t *queue = calc_distance(player1, player2);
-        print_distance(queue, player2);
+        if (calc_distance(player1, player2)) {
+                print_distance(player2);
+        }
 }
 
 
@@ -186,7 +187,6 @@ static void bfs(player_t *player) {
         player->level = 0;
         player_t *start = player;
         llist_enqueue(cohort_queue, player);
-        uint16_t level = 1;
 
         while (!llist_is_empty(cohort_queue)) {
                 player_t *player = (player_t *)llist_dequeue(cohort_queue);
@@ -209,7 +209,8 @@ static void bfs(player_t *player) {
         }
 }
 
-static llist_t* calc_distance(player_t *start, player_t *end) {
+static bool calc_distance(player_t *start, player_t *end) {
+        bool b_route_found = false;
         llist_t *queue = llist_create();
         start->parent = start;
         llist_enqueue(queue, start);
@@ -226,15 +227,18 @@ static llist_t* calc_distance(player_t *start, player_t *end) {
                                         next_player->parent = team;
                                         llist_enqueue(queue, next_player);
                                         if (next_player == end) {
-                                                return queue;
+                                                b_route_found = true;
+                                                goto EXIT;
                                         }
                                 }
                         }
                 }
         }
+EXIT:
+        return b_route_found;
 }
 
-static void print_distance(llist_t *queue, player_t *end) {
+static void print_distance(player_t *end) {
         player_t *player = end;
 
         while (player->parent != player) {

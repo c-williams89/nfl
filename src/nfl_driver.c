@@ -52,9 +52,7 @@ int main (int argc, char **argv) {
                                         goto OPTION_EXIT;
                                 }
                                 my_opts->option = 'p';
-                                my_opts->search_param1 = optarg;
-                                printf("player case\n");
-                                
+                                my_opts->search_param1 = optarg;                                
                                 break;
                         case 's':
                                 if (my_opts->option) {
@@ -62,7 +60,6 @@ int main (int argc, char **argv) {
                                 }
                                 my_opts->option = 's';
                                 my_opts->search_param1 = optarg;
-                                printf("search case\n");
                                 break;
                         case 'S':
                                 my_opts->option = 'S';
@@ -80,7 +77,10 @@ int main (int argc, char **argv) {
                                 ++optind;
                                 break;
                         case 't':
-                                printf("teams case\n");
+                                if (my_opts->option) {
+                                        goto OPTION_EXIT;
+                                }
+                                my_opts->option = 't';
                                 break;
                         case 'd':
                                 my_opts->option = 'd';

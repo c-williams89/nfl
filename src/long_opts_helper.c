@@ -16,6 +16,15 @@ typedef struct l_opts {
 void print_helper (l_opts *my_opts) {
 	size_t len = 0;
         switch (my_opts->option) {
+		case 'p':
+			print_player(my_opts->search_param1, my_opts->player_table);
+			break;
+		case 's':
+			print_search_results(my_opts->search_param1, my_opts->player_table);
+			break;
+		case 't':
+			print_teams(my_opts->team_table);
+			break;
                 case 'r':
 		 	len = strlen(my_opts->search_param1);
                 	char *key = calloc(len + 5, sizeof(char));
