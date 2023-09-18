@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <errno.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "../include/hashtable.h"
 #include "../include/llist.h"
@@ -76,8 +77,7 @@ player_t * player_create(hash_t *team_table, char *current) {
                 } else {
                         tmp = team_create(year, name, player);
                         hash_table_insert(team_table, key, tmp);
-                        // team_t *team = team_create(year, name, player);
-                        // hash_table_insert(team_table, key, team);
+                        llist_enqueue(player->teams, tmp);
                 }
                 player->num_teams += 1;
                 curr_team = strsep(&current, "\t");
@@ -194,25 +194,23 @@ static void bfs(player_t *player) {
                         team_t *team = (team_t *)llist_dequeue(curr->teams);
                         while (!llist_is_empty(team->roster)) {
                                 player_t *next = (player_t *)llist_dequeue(team->roster);
-                                // if (next->level || (next == player)) {
-                                //         continue;
-                                //         printf("Found a current entry\n");
-                                // } else {
-                                //         next->level = (curr->level + 1);
-                                //         cohorts[next->level] += 1;
-                                //         llist_enqueue(cohort_queue, next);
-                                // }
-                                if (next->parent || next == player) {
+                                if (next->level || (next == player)) {
                                         continue;
-                                } else{
+                                        // printf("Found a current entry\n");
+                                } else {
                                         next->level = (curr->level + 1);
                                         cohorts[next->level] += 1;
-                                        next->parent = team;
                                         llist_enqueue(cohort_queue, next);
-
                                 }
-                                
-                                // printf("level: %d\n", next->level);
+                                // if (next->parent || next == player) {
+                                //         continue;
+                                // } else{
+                                //         next->level = (curr->level + 1);
+                                //         cohorts[next->level] += 1;
+                                //         next->parent = curr;
+                                //         llist_enqueue(cohort_queue, next);
+
+                                // }
                         }
                 }
         }   
