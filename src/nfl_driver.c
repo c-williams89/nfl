@@ -83,7 +83,12 @@ int main (int argc, char **argv) {
                                 printf("teams case\n");
                                 break;
                         case 'd':
-                                printf("distance case\n");
+                                my_opts->option = 'd';
+                                my_opts->search_param1 = optarg;
+                                if ((optind < argc) && (*argv[optind] != '-')) {
+                                        my_opts->search_param2 = argv[optind];
+                                }
+                                ++optind;
                                 break;
                         case '?':
                                 goto FILE_EXIT;

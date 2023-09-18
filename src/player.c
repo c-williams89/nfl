@@ -158,6 +158,10 @@ void player_stats(hash_t *player_table, char *name) {
         bfs(player);
 }
 
+void player_distance(hash_t *player_table, char *start, char *end) {
+        
+}
+
 
 void player_destroy(player_t *player) {
         llist_destroy(player->teams);
