@@ -16,6 +16,7 @@
 	void data_destroy(hash_t *table);
 	void player_destroy(player_t *player);
 	void team_destroy(team_t *team);
+	void player_stats(hash_t *player_table, char *name);
 #endif
 
 

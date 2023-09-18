@@ -65,7 +65,8 @@ int main (int argc, char **argv) {
                                 printf("search case\n");
                                 break;
                         case 'S':
-                                printf("stats case\n");
+                                my_opts->option = 'S';
+                                my_opts->search_param1 = optarg;
                                 break;
                         case 'r':
                                 if (my_opts->option) {

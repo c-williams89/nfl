@@ -25,6 +25,8 @@ typedef struct team_t {
         llist_t *roster;
 }team_t;
 
+static void bfs(player_t *player);
+
 static team_t * team_create(char *year, char *name, player_t *player) {
         team_t *team = calloc(1, sizeof(*team));
         team->year = year;
@@ -80,41 +82,6 @@ bool player_insert(player_t *player, hash_t *ht) {
         hash_table_insert(ht, key, player);
         return true;
 }
-
-// TODO: Unused function. Confirm all works through BFS then remove
-/*
-static bool team_insert(team_t *team, hash_t *ht, char *key, player_t *player) {
-        team_t *tmp = (team_t *)find(ht, key);
-
-        if (tmp) {
-                team = tmp;
-                llist_enqueue(tmp->roster, player);
-        } else {
-                team->roster = llist_create();
-                llist_enqueue(team->roster, player);
-                hash_table_insert(ht, key, team);
-        }
-        return true;
-}
-*/
-
-// TODO: Unused function. Confirm all works through BFS then remove
-/*
-void player_add_to_team(player_t *player, hash_t *team_table) {
-        team_t *tmp = NULL;
-        for (int i = 0; i < player->num_teams; ++i) {
-                tmp = (team_t *)llist_peek(player->teams, i);
-                
-                size_t len = strlen(tmp->team_name);
-                char *key = calloc(len + 5, sizeof(char));
-                memcpy(key, tmp->year, 4);
-                strncat(key, tmp->team_name, len);
-
-                team_insert(tmp, team_table, key, player);
-                // free(key);
-        }
-}
-*/
 
 int compare_player (player_t *player, char *val){
         if (0 == strncmp(player->name, val, strlen(player->name))) {
@@ -178,15 +145,15 @@ void print_roster (hash_t *team_table, char *key) {
         }
 }
 
-// void destroy_players() {
-//         player_t *player;
-//         free(player->id);
-//         // llist_destroy on player-teams. only nodes and list, not node data
-//         llist_destroy(&(player)->teams);
-// }
-// void data_destroy (hash_t *table) {
-//         hashtable_destroy(table, destroy_players);
-// }
+void player_stats(hash_t *player_table, char *name) {
+        // Does this function handle name or ID, or both?
+        player_t *player = find_no_key(player_table, name, compare_player);
+        if (player) {
+                bfs(player);
+        }
+
+}
+
 
 void player_destroy(player_t *player) {
         llist_destroy(player->teams);
@@ -194,6 +161,9 @@ void player_destroy(player_t *player) {
 }
 
 void team_destroy(team_t *team) {
-        // free(team->year);
         llist_destroy(team->roster);       
+}
+
+static void bfs(player_t *player) {
+        int cohorts[10] = { 1, 0 };
 }
