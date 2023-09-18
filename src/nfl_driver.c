@@ -83,7 +83,12 @@ int main (int argc, char **argv) {
                                 printf("teams case\n");
                                 break;
                         case 'd':
-                                printf("distance case\n");
+                                my_opts->option = 'd';
+                                my_opts->search_param1 = optarg;
+                                if ((optind < argc) && (*argv[optind] != '-')) {
+                                        my_opts->search_param2 = argv[optind];
+                                }
+                                ++optind;
                                 break;
                         case '?':
                                 goto FILE_EXIT;
@@ -97,8 +102,8 @@ int main (int argc, char **argv) {
         }
 
         // FILE *fp = fopen("./test/test_data/data_4_entries.txt", "r");
-        // FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
-        FILE *fp = fopen("./test/test_data/nfldata.tsv", "r");
+        FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
+        // FILE *fp = fopen("./test/test_data/nfldata.tsv", "r");
 
         if (!validate_file(fp)) {
                 goto FILE_EXIT;
@@ -127,7 +132,7 @@ int main (int argc, char **argv) {
 
 
         print_helper(my_opts);
-        // print_roster(team_table, "1987Indianapolis Colts");
+        // print_roster(team_table, "1981Cleveland Browns");
         // print_player(my_opts->search_param1, player_table);
         // print_search_results(my_opts->search_param1, player_table);
         // print_teams(team_table);

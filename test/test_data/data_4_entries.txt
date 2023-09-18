@@ -1,2 +1,6 @@
-tIs00	Isaako Aaitui	 	1987-01-25	UNLV	2013,Miami Dolphins
-BrenSa01	Sam Brenner	lg	1990-04-27	Utah	2013,Miami Dolphins	2015,Miami Dolphins
+StauRo00	Roger Staubach		1942-02-05	New Mex. Mil. Inst.	1969,Dallas Cowboys	1970,Dallas Cowboys	1971,Dallas Cowboys	1972,Dallas Cowboys	1973,Dallas Cowboys	1974,Dallas Cowboys	1975,Dallas Cowboys	1976,Dallas Cowboys	1977,Dallas Cowboys	1978,Dallas Cowboys	1979,Dallas Cowboys
+JoneEd00	Too Tall Jones		1951-02-23	Tennessee St.	1974,Dallas Cowboys	1975,Dallas Cowboys	1976,Dallas Cowboys	1977,Dallas Cowboys	1978,Dallas Cowboys	1980,Dallas Cowboys	1981,Dallas Cowboys	1982,Dallas Cowboys	1983,Dallas Cowboys	1984,Dallas Cowboys	1985,Dallas Cowboys	1986,Dallas Cowboys	1987,Dallas Cowboys	1988,Dallas Cowboys	1989,Dallas Cowboys
+AikmTr00	Troy Aikman	QB	1966-11-21	Oklahoma	1989,Dallas Cowboys	1990,Dallas Cowboys	1991,Dallas Cowboys	1992,Dallas Cowboys	1993,Dallas Cowboys	1994,Dallas Cowboys	1995,Dallas Cowboys	1996,Dallas Cowboys	1997,Dallas Cowboys	1998,Dallas Cowboys	1999,Dallas Cowboys	2000,Dallas Cowboys
+AdamFl00	Flozell Adams	RG	1975-05-18	Michigan St.	1998,Dallas Cowboys	1999,Dallas Cowboys	2000,Dallas Cowboys	2001,Dallas Cowboys	2002,Dallas Cowboys	2003,Dallas Cowboys	2004,Dallas Cowboys	2005,Dallas Cowboys	2006,Dallas Cowboys	2007,Dallas Cowboys	2008,Dallas Cowboys	2009,Dallas Cowboys	2010,Pittsburgh Steelers
+AustMi00	Miles Austin	WR	1984-06-30	Monmouth	2006,Dallas Cowboys	2007,Dallas Cowboys	2008,Dallas Cowboys	2009,Dallas Cowboys	2010,Dallas Cowboys	2011,Dallas Cowboys	2012,Dallas Cowboys	2013,Dallas Cowboys	2014,Cleveland Browns	2015,Philadelphia Eagles
+ManzJo00	Johnny Manziel	qb	1992-12-06	Texas A&M	2014,Cleveland Browns	2015,Cleveland Browns

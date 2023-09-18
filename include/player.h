@@ -17,6 +17,7 @@
 	void player_destroy(player_t *player);
 	void team_destroy(team_t *team);
 	void player_stats(hash_t *player_table, char *name);
+	void player_distance(hash_t *player_table, char *start, char *end);
 #endif
 
 

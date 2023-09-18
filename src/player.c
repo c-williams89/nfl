@@ -18,17 +18,21 @@ typedef struct player_t {
         llist_t *teams;
         int num_teams;
         int level;
+        void *parent;
 }player_t;
 
 typedef struct team_t {
         char *team_name;
         char *year;
         llist_t *roster;
+        void *parent;
 }team_t;
 
 enum { NUM_COHORTS = 10};
 
 static void bfs(player_t *player);
+static llist_t * calc_distance(player_t *start, player_t *end);
+static void print_distance(llist_t *queue, player_t *start);
 
 static team_t * team_create(char *year, char *name, player_t *player) {
         team_t *team = calloc(1, sizeof(*team));
@@ -151,11 +155,19 @@ void print_roster (hash_t *team_table, char *key) {
 }
 
 void player_stats(hash_t *player_table, char *name) {
+        // TODO: Incorporate search by name or id
         player_t *player = find_no_key(player_table, name, (comp_f)compare_player);
         // if (player) {
         //         bfs(player);
         // }
         bfs(player);
+}
+
+void player_distance(hash_t *player_table, char *start, char *end) {
+        player_t *player1 = find_no_key(player_table, start, (comp_f)compare_player);
+        player_t *player2 = find_no_key(player_table, end, (comp_f)compare_player);
+        llist_t *queue = calc_distance(player1, player2);
+        print_distance(queue, player2);
 }
 
 
@@ -169,56 +181,66 @@ void team_destroy(team_t *team) {
 }
 
 static void bfs(player_t *player) {
-        //PSEUDO: enqueue the starting player
-        // While llist isn't empty
-        // Dequeue from llist
-        // while player.team list isnt empt
-        // dequeue player from player.teams
-        // enqueue to llinked list
-        // increment cohort index
-
         int cohorts[NUM_COHORTS] = { 1, 0 };
-        // int cohorts[NUM_COHORTS] = { 0 };
-
         llist_t *cohort_queue = llist_create();
-        player->level = 1;
+        player->level = 0;
+        player_t *start = player;
         llist_enqueue(cohort_queue, player);
         uint16_t level = 1;
-        player_t *next_player = NULL;
-        // player_t *new_level = NULL;
 
-        while (!llist_is_empty(player->teams)) {
-                team_t *curr_team = (team_t*)llist_dequeue(player->teams);
-                while (!llist_is_empty(curr_team->roster)) {
-                        next_player = (player_t *)llist_dequeue(curr_team->roster);
-                        if (!next_player->level) {
-                                next_player->level = level;
-                                llist_enqueue(cohort_queue, next_player);
-                                cohorts[level] += 1;
+        while (!llist_is_empty(cohort_queue)) {
+                player_t *player = (player_t *)llist_dequeue(cohort_queue);
+                while (!llist_is_empty(player->teams)) {
+                        team_t *team = (team_t *)llist_dequeue(player->teams);
+                        while (!llist_is_empty(team->roster)) {
+                                player_t *next = (player_t *)llist_dequeue(team->roster);
+                                if (next->level || (next == start)) {
+                                        continue;
+                                }
+                                next->level = (player->level) + 1;
+                                cohorts[next->level] += 1;
+                                llist_enqueue(cohort_queue, next);
                         }
                 }
+        }   
+
+        for (int i = 0; i < NUM_COHORTS; ++i) {
+                printf("%d -- %d cohorts\n", i, cohorts[i]);
         }
+}
 
-        // while (!llist_is_empty(cohort_queue)) {
-        for (int i = 2; i < NUM_COHORTS; ++i) {
-                for (int j = 0; j < cohorts[i - 1]; ++j) {
-                        player_t *curr_player = (player_t *)llist_dequeue(cohort_queue);
-                        while (!llist_is_empty(curr_player->teams)) {
-                                team_t *curr_team = (team_t *)llist_dequeue(curr_player->teams);
-
-                                while (!llist_is_empty(curr_team->roster)) {
-                                        next_player = (player_t *)llist_dequeue(curr_team->roster);
-                                        if (!next_player->level) {
-                                                llist_enqueue(cohort_queue, next_player);
-                                                next_player->level = level;
-                                                cohorts[i] += 1;
+static llist_t* calc_distance(player_t *start, player_t *end) {
+        llist_t *queue = llist_create();
+        start->parent = start;
+        llist_enqueue(queue, start);
+        while (!llist_is_empty(queue)) {
+                player_t *player = (player_t *)llist_dequeue(queue);
+                while (!llist_is_empty(player->teams)) {
+                        team_t *team = (team_t *)llist_dequeue(player->teams);
+                        if (!team->parent) {
+                                team->parent = player;
+                        }
+                        while (!llist_is_empty(team->roster)) {
+                                player_t *next_player = (player_t *)llist_dequeue(team->roster);
+                                if (!next_player->parent) {
+                                        next_player->parent = team;
+                                        llist_enqueue(queue, next_player);
+                                        if (next_player == end) {
+                                                return queue;
                                         }
                                 }
                         }
                 }
         }
+}
 
-        for (int i = 0; i < NUM_COHORTS; ++i) {
-                printf("%d -- %d cohorts\n", i, cohorts[i]);
+static void print_distance(llist_t *queue, player_t *end) {
+        player_t *player = end;
+
+        while (player->parent != player) {
+                team_t *team = player->parent;
+                player_t *parent = team->parent;
+                printf("%s played for %s in %s with %s\n", player->name, team->team_name, team->year, parent->name);
+                player = parent;
         }
 }
