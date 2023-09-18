@@ -24,6 +24,9 @@ void print_helper (l_opts *my_opts) {
 			print_roster(my_opts->team_table, key);
 			free(key);
 			break;
+		case 'S':
+			player_stats(my_opts->player_table, my_opts->search_param1);
+			break;
 		default:
 			break;
         }
