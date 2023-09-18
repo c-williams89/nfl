@@ -28,6 +28,7 @@ void print_helper (l_opts *my_opts) {
 			player_stats(my_opts->player_table, my_opts->search_param1);
 			break;
 		case 'd':
+			player_distance(my_opts->player_table, my_opts->search_param1, my_opts->search_param2);
 			break;
 		default:
 			break;
