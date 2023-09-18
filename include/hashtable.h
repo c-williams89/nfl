@@ -20,6 +20,7 @@ llist_t *find_matches(hash_t *table, char *val, comp_f compare);
 llist_t *find_teams(hash_t *table);
 // void hashtable_destroy(hash_t *table);
 void hashtable_destroy(l_opts *my_opts);
+llist_t * find_smaller_teams(hash_t *team_table);
 #endif
 
 

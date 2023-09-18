@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <errno.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "../include/hashtable.h"
 #include "../include/llist.h"
@@ -31,8 +32,8 @@ typedef struct team_t {
 enum { NUM_COHORTS = 10};
 
 static void bfs(player_t *player);
-static llist_t * calc_distance(player_t *start, player_t *end);
-static void print_distance(llist_t *queue, player_t *start);
+static bool calc_distance(player_t *start, player_t *end);
+static void print_distance(player_t *start);
 
 static team_t * team_create(char *year, char *name, player_t *player) {
         team_t *team = calloc(1, sizeof(*team));
@@ -62,22 +63,21 @@ player_t * player_create(hash_t *team_table, char *current) {
         curr_team = strsep(&current, "\t");
         player->teams = llist_create();
         while (curr_team) {
+                char *key = strdup(curr_team);
                 char *year = strsep(&curr_team, ",");
                 char *name = curr_team;
-                size_t len = strlen(name);
-                // TODO: Don't Calloc key, just grab whole string '1970,Miami Dolphins'
-                //  And use as the key.
-                char *key = calloc(len + 5, sizeof(char));
-                memcpy(key, year, 4);
-                strncat(key, name, len);
-                team_t *tmp = find(team_table, key);
+
+                team_t *tmp = (team_t*)find(team_table, key);
+
                 if (tmp) {
-                        llist_enqueue(player->teams, tmp);
                         llist_enqueue(tmp->roster, player);
+                        llist_enqueue(player->teams, tmp);
+
                         free(key);
                 } else {
-                        team_t *team = team_create(year, name, player);
-                        hash_table_insert(team_table, key, team);
+                        tmp = team_create(year, name, player);
+                        hash_table_insert(team_table, key, tmp);
+                        llist_enqueue(player->teams, tmp);
                 }
                 player->num_teams += 1;
                 curr_team = strsep(&current, "\t");
@@ -166,10 +166,10 @@ void player_stats(hash_t *player_table, char *name) {
 void player_distance(hash_t *player_table, char *start, char *end) {
         player_t *player1 = find_no_key(player_table, start, (comp_f)compare_player);
         player_t *player2 = find_no_key(player_table, end, (comp_f)compare_player);
-        llist_t *queue = calc_distance(player1, player2);
-        print_distance(queue, player2);
+        if (calc_distance(player1, player2)) {
+                print_distance(player2);
+        }
 }
-
 
 void player_destroy(player_t *player) {
         llist_destroy(player->teams);
@@ -184,32 +184,50 @@ static void bfs(player_t *player) {
         int cohorts[NUM_COHORTS] = { 1, 0 };
         llist_t *cohort_queue = llist_create();
         player->level = 0;
-        player_t *start = player;
+        // player_t *start = player;
+        player->parent = player;
         llist_enqueue(cohort_queue, player);
-        uint16_t level = 1;
 
         while (!llist_is_empty(cohort_queue)) {
-                player_t *player = (player_t *)llist_dequeue(cohort_queue);
-                while (!llist_is_empty(player->teams)) {
-                        team_t *team = (team_t *)llist_dequeue(player->teams);
+                player_t *curr = (player_t *)llist_dequeue(cohort_queue);
+                while (!llist_is_empty(curr->teams)) {
+                        team_t *team = (team_t *)llist_dequeue(curr->teams);
                         while (!llist_is_empty(team->roster)) {
                                 player_t *next = (player_t *)llist_dequeue(team->roster);
-                                if (next->level || (next == start)) {
+                                if (next->level || (next == player)) {
                                         continue;
+                                        // printf("Found a current entry\n");
+                                } else {
+                                        next->level = (curr->level + 1);
+                                        cohorts[next->level] += 1;
+                                        llist_enqueue(cohort_queue, next);
                                 }
-                                next->level = (player->level) + 1;
-                                cohorts[next->level] += 1;
-                                llist_enqueue(cohort_queue, next);
+                                // if (next->parent || next == player) {
+                                //         continue;
+                                // } else{
+                                //         next->level = (curr->level + 1);
+                                //         cohorts[next->level] += 1;
+                                //         next->parent = curr;
+                                //         llist_enqueue(cohort_queue, next);
+
+                                // }
                         }
                 }
         }   
-
+        printf("Network stats for %s\n", player->name);
+        int total_connected = 0;
+        float avg_sep = 0.0;
         for (int i = 0; i < NUM_COHORTS; ++i) {
-                printf("%d -- %d cohorts\n", i, cohorts[i]);
+                total_connected += cohorts[i];
+                avg_sep += (i * cohorts[i]);
+                printf("%d -- %d cohort%s", i, cohorts[i], (i == 0)? "\n": "s\n");
         }
+        avg_sep = avg_sep / total_connected;
+        printf("Average separation %.6f\n", avg_sep);
 }
 
-static llist_t* calc_distance(player_t *start, player_t *end) {
+static bool calc_distance(player_t *start, player_t *end) {
+        bool b_route_found = false;
         llist_t *queue = llist_create();
         start->parent = start;
         llist_enqueue(queue, start);
@@ -226,15 +244,18 @@ static llist_t* calc_distance(player_t *start, player_t *end) {
                                         next_player->parent = team;
                                         llist_enqueue(queue, next_player);
                                         if (next_player == end) {
-                                                return queue;
+                                                b_route_found = true;
+                                                goto EXIT;
                                         }
                                 }
                         }
                 }
         }
+EXIT:
+        return b_route_found;
 }
 
-static void print_distance(llist_t *queue, player_t *end) {
+static void print_distance(player_t *end) {
         player_t *player = end;
 
         while (player->parent != player) {
@@ -242,5 +263,15 @@ static void print_distance(llist_t *queue, player_t *end) {
                 player_t *parent = team->parent;
                 printf("%s played for %s in %s with %s\n", player->name, team->team_name, team->year, parent->name);
                 player = parent;
+        }
+}
+
+void find_small_teams(hash_t *team_table) {
+        llist_t *teams = find_smaller_teams(team_table);
+        while (!llist_is_empty(teams)) {
+                team_t *team = (team_t *)llist_dequeue(teams);
+                if (llist_get_size(team->roster) == 31) {
+                        printf("team: %s %s\n", team->year, team->team_name);
+                }
         }
 }

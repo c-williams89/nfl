@@ -152,7 +152,6 @@ void hashtable_destroy(l_opts *my_opts) {
         }
 
         hash_t *teams = my_opts->team_table;
-        printf("Teams size: %ld\n", teams->curr_size);
         for (uint32_t i = 0; i < teams->max_cap; ++i) {
                 if (teams->entries[i]) {
                         team_destroy(teams->entries[i]->data);
@@ -161,8 +160,6 @@ void hashtable_destroy(l_opts *my_opts) {
         }
 
         hash_t *players = my_opts->player_table;
-        printf("Players size: %ld\n", players->curr_size);
-
         for (uint32_t i = 0; i < players->max_cap; ++i) {
                 if (players->entries[i]) {
                         player_destroy(players->entries[i]->data);
@@ -182,4 +179,14 @@ void hashtable_destroy(l_opts *my_opts) {
         free(teams->entries);
         free(teams);
 
+}
+
+llist_t * find_smaller_teams(hash_t *team_table) {
+        llist_t *teams = llist_create();
+        for (int i = 0; i < team_table->max_cap; ++i) {
+                if (team_table->entries[i]) {
+                        llist_enqueue(teams, team_table->entries[i]->data);
+                }
+        }
+        return teams;
 }

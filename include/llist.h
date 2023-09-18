@@ -10,6 +10,7 @@
 	bool llist_is_empty(llist_t * llist);
 	void *llist_peek(llist_t *list, int index);
 	void llist_destroy(llist_t * list);
+	int llist_get_size(llist_t *llist);
 #endif
 
 
