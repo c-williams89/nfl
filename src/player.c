@@ -193,7 +193,6 @@ static void bfs(player_t *player) {
         int cohorts[NUM_COHORTS] = { 1, 0 };
         llist_t *cohort_queue = llist_create();
         player->level = 0;
-        // player_t *start = player;
         player->parent = player;
         llist_enqueue(cohort_queue, player);
 
@@ -336,14 +335,10 @@ void player_oracle(hash_t *player_table, hash_t *team_table) {
         int count = 0;
         while (!llist_is_empty(players)) {
                 player = (player_t *)llist_dequeue(players);
-                // printf("Processing player: %s\n", player->name);
                 oracle_search(player, &or_results);
                 reset_players(player_table, (del_f)reset);
                 reset_teams(team_table, (del_f)reset_team);
                 ++count;
-                // if (count == 5) {
-                //         break;
-                // }
                 if (0 == (count % 500)) {
                         printf("Processed %d players\n", count);
                 } 
