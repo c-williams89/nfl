@@ -1,0 +1,6 @@
+MoneBr00	Bryan Mone	 	1995-10-20		2019,Seattle Seahawks
+RoseCa20	Carlton Rose	 	1962-02-08	Michigan	1987,Washington Redskins
+GaffDe00	Derrick Gaffney	WR	1955-05-24	Florida	1978,New York Jets	1979,New York Jets	1980,New York Jets	1981,New York Jets	1982,New York Jets	1983,New York Jets	1984,New York Jets	1987,New York Jets
+JackJu01	Justin Jackson	rb	1995-04-22	Northwestern	2018,Los Angeles Chargers	2019,Los Angeles Chargers
+SinnJo20	John Sinnott	LT	1958-04-18	Brown	1982,Baltimore Colts
+

@@ -1,0 +1,302 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 86.25      4.23     4.23 28268795     0.00     0.00  llist_peek
+  9.99      4.73     0.49       10     0.05     0.48  oracle_search
+  2.04      4.83     0.10    96057     0.00     0.00  find
+  0.82      4.87     0.04 28851545     0.00     0.00  llist_get_size
+  0.61      4.90     0.03       10     0.00     0.00  reset_players
+  0.20      4.91     0.01   118256     0.00     0.00  hash
+  0.20      4.92     0.01    20490     0.00     0.00  player_destroy
+  0.00      4.92     0.00   315390     0.00     0.00  llist_enqueue
+  0.00      4.92     0.00   204900     0.00     0.00  reset
+  0.00      4.92     0.00   102476     0.00     0.00  llist_is_empty
+  0.00      4.92     0.00   102471     0.00     0.00  llist_dequeue
+  0.00      4.92     0.00    22210     0.00     0.00  llist_create
+  0.00      4.92     0.00    22209     0.00     0.00  llist_destroy
+  0.00      4.92     0.00    22199     0.00     0.00  create_entry
+  0.00      4.92     0.00    22199     0.00     0.00  hash_table_insert
+  0.00      4.92     0.00    20490     0.00     0.00  player_create
+  0.00      4.92     0.00    20490     0.00     0.00  player_insert
+  0.00      4.92     0.00     1709     0.00     0.00  team_create
+  0.00      4.92     0.00     1709     0.00     0.00  team_destroy
+  0.00      4.92     0.00        2     0.00     0.00  hash_table_create
+  0.00      4.92     0.00        1     0.00     0.00  get_num_entries
+  0.00      4.92     0.00        1     0.00     0.00  get_player
+  0.00      4.92     0.00        1     0.00     0.01  hashtable_destroy
+  0.00      4.92     0.00        1     0.00     4.80  player_oracle
+  0.00      4.92     0.00        1     0.00     4.80  print_helper
+  0.00      4.92     0.00        1     0.00     0.00  validate_file
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.20% of 4.92 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]    100.0    0.00    4.92                 main [1]
+                0.00    4.80       1/1           print_helper [3]
+                0.00    0.11   20490/20490       player_create [6]
+                0.00    0.01       1/1           hashtable_destroy [12]
+                0.00    0.00   20490/20490       player_insert [14]
+                0.00    0.00       2/2           hash_table_create [24]
+                0.00    0.00       1/1           validate_file [27]
+                0.00    0.00       1/1           get_num_entries [25]
+-----------------------------------------------
+                0.00    4.80       1/1           print_helper [3]
+[2]     97.6    0.00    4.80       1         player_oracle [2]
+                0.49    4.27      10/10          oracle_search [4]
+                0.03    0.00      10/10          reset_players [9]
+                0.00    0.00      10/102471      llist_dequeue [18]
+                0.00    0.00      10/102476      llist_is_empty [17]
+                0.00    0.00       1/1           get_player [26]
+-----------------------------------------------
+                0.00    4.80       1/1           main [1]
+[3]     97.6    0.00    4.80       1         print_helper [3]
+                0.00    4.80       1/1           player_oracle [2]
+-----------------------------------------------
+                0.49    4.27      10/10          player_oracle [2]
+[4]     96.9    0.49    4.27      10         oracle_search [4]
+                4.23    0.00 28268795/28268795     llist_peek [5]
+                0.04    0.00 28851545/28851545     llist_get_size [8]
+                0.00    0.00  102786/315390      llist_enqueue [15]
+                0.00    0.00  102466/102476      llist_is_empty [17]
+                0.00    0.00  102461/102471      llist_dequeue [18]
+                0.00    0.00      10/22210       llist_create [19]
+                0.00    0.00      10/22209       llist_destroy [20]
+-----------------------------------------------
+                4.23    0.00 28268795/28268795     oracle_search [4]
+[5]     86.2    4.23    0.00 28268795         llist_peek [5]
+-----------------------------------------------
+                0.00    0.11   20490/20490       main [1]
+[6]      2.2    0.00    0.11   20490         player_create [6]
+                0.10    0.01   96057/96057       find [7]
+                0.00    0.00    1709/22199       hash_table_insert [13]
+                0.00    0.00  190405/315390      llist_enqueue [15]
+                0.00    0.00   20490/22210       llist_create [19]
+                0.00    0.00    1709/1709        team_create [22]
+-----------------------------------------------
+                0.10    0.01   96057/96057       player_create [6]
+[7]      2.2    0.10    0.01   96057         find [7]
+                0.01    0.00   96057/118256      hash [10]
+-----------------------------------------------
+                0.04    0.00 28851545/28851545     oracle_search [4]
+[8]      0.8    0.04    0.00 28851545         llist_get_size [8]
+-----------------------------------------------
+                0.03    0.00      10/10          player_oracle [2]
+[9]      0.6    0.03    0.00      10         reset_players [9]
+                0.00    0.00  204900/204900      reset [16]
+-----------------------------------------------
+                0.00    0.00   22199/118256      hash_table_insert [13]
+                0.01    0.00   96057/118256      find [7]
+[10]     0.2    0.01    0.00  118256         hash [10]
+-----------------------------------------------
+                0.01    0.00   20490/20490       hashtable_destroy [12]
+[11]     0.2    0.01    0.00   20490         player_destroy [11]
+                0.00    0.00   20490/22209       llist_destroy [20]
+-----------------------------------------------
+                0.00    0.01       1/1           main [1]
+[12]     0.2    0.00    0.01       1         hashtable_destroy [12]
+                0.01    0.00   20490/20490       player_destroy [11]
+                0.00    0.00    1709/1709        team_destroy [23]
+-----------------------------------------------
+                0.00    0.00    1709/22199       player_create [6]
+                0.00    0.00   20490/22199       player_insert [14]
+[13]     0.0    0.00    0.00   22199         hash_table_insert [13]
+                0.00    0.00   22199/118256      hash [10]
+                0.00    0.00   22199/22199       create_entry [21]
+-----------------------------------------------
+                0.00    0.00   20490/20490       main [1]
+[14]     0.0    0.00    0.00   20490         player_insert [14]
+                0.00    0.00   20490/22199       hash_table_insert [13]
+-----------------------------------------------
+                0.00    0.00    1709/315390      team_create [22]
+                0.00    0.00   20490/315390      get_player [26]
+                0.00    0.00  102786/315390      oracle_search [4]
+                0.00    0.00  190405/315390      player_create [6]
+[15]     0.0    0.00    0.00  315390         llist_enqueue [15]
+-----------------------------------------------
+                0.00    0.00  204900/204900      reset_players [9]
+[16]     0.0    0.00    0.00  204900         reset [16]
+-----------------------------------------------
+                0.00    0.00      10/102476      player_oracle [2]
+                0.00    0.00  102466/102476      oracle_search [4]
+[17]     0.0    0.00    0.00  102476         llist_is_empty [17]
+-----------------------------------------------
+                0.00    0.00      10/102471      player_oracle [2]
+                0.00    0.00  102461/102471      oracle_search [4]
+[18]     0.0    0.00    0.00  102471         llist_dequeue [18]
+-----------------------------------------------
+                0.00    0.00       1/22210       get_player [26]
+                0.00    0.00      10/22210       oracle_search [4]
+                0.00    0.00    1709/22210       team_create [22]
+                0.00    0.00   20490/22210       player_create [6]
+[19]     0.0    0.00    0.00   22210         llist_create [19]
+-----------------------------------------------
+                0.00    0.00      10/22209       oracle_search [4]
+                0.00    0.00    1709/22209       team_destroy [23]
+                0.00    0.00   20490/22209       player_destroy [11]
+[20]     0.0    0.00    0.00   22209         llist_destroy [20]
+-----------------------------------------------
+                0.00    0.00   22199/22199       hash_table_insert [13]
+[21]     0.0    0.00    0.00   22199         create_entry [21]
+-----------------------------------------------
+                0.00    0.00    1709/1709        player_create [6]
+[22]     0.0    0.00    0.00    1709         team_create [22]
+                0.00    0.00    1709/22210       llist_create [19]
+                0.00    0.00    1709/315390      llist_enqueue [15]
+-----------------------------------------------
+                0.00    0.00    1709/1709        hashtable_destroy [12]
+[23]     0.0    0.00    0.00    1709         team_destroy [23]
+                0.00    0.00    1709/22209       llist_destroy [20]
+-----------------------------------------------
+                0.00    0.00       2/2           main [1]
+[24]     0.0    0.00    0.00       2         hash_table_create [24]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[25]     0.0    0.00    0.00       1         get_num_entries [25]
+-----------------------------------------------
+                0.00    0.00       1/1           player_oracle [2]
+[26]     0.0    0.00    0.00       1         get_player [26]
+                0.00    0.00   20490/315390      llist_enqueue [15]
+                0.00    0.00       1/22210       llist_create [19]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[27]     0.0    0.00    0.00       1         validate_file [27]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [21] create_entry           [18] llist_dequeue          [14] player_insert
+   [7] find                   [20] llist_destroy           [2] player_oracle
+  [25] get_num_entries        [15] llist_enqueue           [3] print_helper
+  [26] get_player              [8] llist_get_size         [16] reset
+  [10] hash                   [17] llist_is_empty          [9] reset_players
+  [24] hash_table_create       [5] llist_peek             [22] team_create
+  [13] hash_table_insert       [4] oracle_search          [23] team_destroy
+  [12] hashtable_destroy       [6] player_create          [27] validate_file
+  [19] llist_create           [11] player_destroy

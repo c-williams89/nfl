@@ -277,17 +277,17 @@ static void oracle_search(player_t *player, struct oracle_t *or_results) {
         int cohorts[NUM_COHORTS] = { 1, 0 };
         llist_t *cohort_queue = llist_create();
         player->level = 0;
-        player->parent = player;
         llist_enqueue(cohort_queue, player);
         while (!llist_is_empty(cohort_queue)) {
                 player_t *curr = (player_t *)llist_dequeue(cohort_queue);
-        
-        // for (int i = 0; i < llist_get_size(cohort_queue); ++i) {
-        //         player_t *curr = (player_t *)llist_peek(cohort_queue, i);
-                for (int j = 0; j < llist_get_size(curr->teams); ++j) {
-                        team_t * team = (team_t *)llist_peek(curr->teams, j);
-                        for (int k = 0; k < llist_get_size(team->roster); ++k) {
-                                player_t *next = (player_t *)llist_peek(team->roster, k);
+                llist_iter_t teams = { 0 };
+                llist_create_iter(curr->teams, &teams);
+                while ((!llist_iter_is_empty(teams))) {
+                        team_t *team = (team_t *)llist_iter_next(&teams);
+                        llist_iter_t players = { 0 };
+                        llist_create_iter(team->roster, &players);
+                        while (!llist_iter_is_empty(players)) {
+                                player_t *next = (player_t *)llist_iter_next(&players);
                                 if (next->level || next == player) {
                                         continue;
                                 } else {
@@ -295,22 +295,45 @@ static void oracle_search(player_t *player, struct oracle_t *or_results) {
                                         cohorts[next->level] += 1;
                                         llist_enqueue(cohort_queue, next);
                                 }
-                                if ((next->level == 2) && (cohorts[1] < 100)) {
+
+                                if ((2 == next->level) && (cohorts[1] < 100)) {
                                         llist_destroy(cohort_queue);
                                         return;
                                 }
                         }
                 }
-        }
-        llist_destroy(cohort_queue);
 
-        // printf("Network stats for %s\n", player->name);
+
+
+                // llist_t *tmp = curr->teams;
+                // while (!llist_is_empty(tmp)) {
+                //         // team_t *tmp_team = (team_t *)llist_dequeue(tmp);
+                //         llist_t *tmp_roster = tmp_team->roster;
+                //         while (!llist_is_empty(tmp_roster)) {
+                //                 player_t *next = (player_t *)llist_dequeue(tmp_roster);
+                //                 if (next->level || next == player) {
+                //                         continue;
+                //                 } else {
+                //                         next->level = (curr->level + 1);
+                //                         cohorts[next->level] += 1;
+                //                         llist_enqueue(cohort_queue, next);
+                //                 }
+                                
+                //                 if ((next->level == 2) && (cohorts[1] < 100)) {
+                //                         llist_destroy(cohort_queue);
+                //                         return;
+                //                 }
+                        
+                //         }
+                // }
+        }
+        // llist_destroy(cohort_queue);
+
         int total_connected = 0;
         float avg_sep = 0.0;
         for (int i = 0; i < NUM_COHORTS; ++i) {
                 total_connected += cohorts[i];
                 avg_sep += (i * cohorts[i]);
-                // printf("%d -- %d cohort%s", i, cohorts[i], (i == 0)? "\n": "s\n");
         }
         avg_sep = avg_sep / total_connected;
         if (avg_sep > or_results->worst_sep) {
@@ -325,8 +348,6 @@ static void oracle_search(player_t *player, struct oracle_t *or_results) {
 }
 
 void player_oracle(hash_t *player_table) {
-        // player_t *best = NULL;
-        // player_t *worst = NULL;
         struct oracle_t or_results = { 0 };
         or_results.worst_sep = 0.0;
         or_results.best_sep = FLT_MAX;
@@ -335,17 +356,19 @@ void player_oracle(hash_t *player_table) {
         int count = 0;
         while (!llist_is_empty(players)) {
                 player = (player_t *)llist_dequeue(players);
-                printf("Processing player: %s\n", player->name);
-                // oracle_search(player, &best_sep, &worst_sep, &best, &worst);
+                // printf("Processing player: %s\n", player->name);
                 oracle_search(player, &or_results);
                 reset_players(player_table, (del_f)reset);
-
-                // break;
                 ++count;
-                if (0 == (count % 100)) {
+                // if (count == 5) {
+                //         break;
+                // }
+                if (0 == (count % 500)) {
                         printf("Processed %d players\n", count);
                 } 
         }
-        printf("Network stats for %s\n", player->name);
-        printf("The best is %s with a score of %.6f\n", or_results.best->name, or_results.best_sep);
+        printf("And the winners are:\n");
+        printf("The center of the universe (since 1960) with a score of %.6f is %s\n", or_results.best_sep, or_results.best->name);
+        printf("The least connected NFL player with at least 100 connections of the NFL ");
+        printf("universe (since 1960) with a score of %.6f is %s\n", or_results.worst_sep, or_results.worst->name);
 }

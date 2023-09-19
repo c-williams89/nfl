@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Typedef the node as a pointer named iter
+typedef struct node *iter;
+
+// Standard linked-list node
+struct node {
+	void *word;
+	struct node *next;
+};
+
+// Convert a single node into a copy of the pointer to node
+void get_iter(struct node *source, iter *dest)
+{
+	if (!dest) {
+		return;
+	}
+	*dest = source;
+}
+
+// Save data, move iter forward, return data
+void *iter_next(iter* target)
+{
+	if (!target || !*target) {
+		return NULL;
+	}
+	void *word = (*target)->word;
+	*target = (*target)->next;
+	return word;
+}
+
+int main(int argc, char *argv[])
+{
+	// Make a fake chain
+	struct node *head = calloc(1, sizeof(*head));
+	head->next = calloc(1, sizeof(struct node));
+	head->next->next = calloc(1, sizeof(struct node));
+
+	head->word = "Hello\n";
+	head->next->word = "World\n";
+	head->next->next->word = "!\n";
+
+	// Stack allocatecd "iterator" (really just a pointer to first node)
+	iter new_iter;
+	get_iter(head, &new_iter);
+
+	void *word = "Happy Today\n";
+	printf("%s\n", word);
+
+	word = iter_next(&new_iter);
+	printf("%s\n", word);
+
+	word = iter_next(&new_iter);
+	printf("%s\n", word);
+
+	word = iter_next(&new_iter);
+	printf("%s\n", word);
+
+	return 0;
+}

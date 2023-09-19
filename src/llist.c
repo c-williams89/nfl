@@ -17,6 +17,8 @@ struct llist_t {
 	int size;
 };
 
+typedef struct node_t *llist_iter_t;
+
 llist_t *llist_create()
 {
 	llist_t *llist = calloc(1, sizeof(*llist));
@@ -110,4 +112,19 @@ void llist_destroy(llist_t * llist)
 
 int llist_get_size(llist_t *llist) {
 	return llist->size;
+}
+
+bool llist_create_iter(llist_t *llist, llist_iter_t *iter) {
+	*iter = llist->head;
+	return true;
+}
+
+void *llist_iter_next(llist_iter_t *iter) {
+	llist_iter_t tmp = *iter;
+	*iter = tmp->next;
+	return tmp->data;
+}
+
+bool llist_iter_is_empty(llist_iter_t iter) {
+	return (!iter) ? true : false;
 }
