@@ -37,6 +37,7 @@ int main (int argc, char **argv) {
                         {"roster", required_argument, NULL, 'r'},
                         {"teams", no_argument, NULL, 't'},
                         {"distance", required_argument, NULL, 'd'},
+                        {"oracle", no_argument, NULL, 'o'},
                         {0, 0, 0, 0}
                 };
                 c = getopt_long(argc, argv, "-:f:", long_options, &option_index);
@@ -96,6 +97,12 @@ int main (int argc, char **argv) {
                                 if (!fp) {
                                         goto OPTION_EXIT;
                                 }
+                                break;
+                        case 'o':
+                                if (my_opts->option) {
+                                        goto OPTION_EXIT;
+                                }
+                                my_opts->option = 'o';
                                 break;
                         case '?':
                                 goto FILE_EXIT;
