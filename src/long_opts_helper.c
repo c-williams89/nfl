@@ -40,6 +40,9 @@ void print_helper (l_opts *my_opts) {
 		case 'd':
 			player_distance(my_opts->player_table, my_opts->search_param1, my_opts->search_param2);
 			break;
+		case 'o':
+			player_oracle(my_opts->player_table, my_opts->team_table);
+			break;
 		default:
 			break;
         }

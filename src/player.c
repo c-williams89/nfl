@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
+#include <float.h>
 
 #include "../include/hashtable.h"
 #include "../include/llist.h"
@@ -180,11 +181,18 @@ void team_destroy(team_t *team) {
         llist_destroy(team->roster);       
 }
 
+void reset(player_t *player) {
+        player->level = 0;
+}
+
+void reset_team(team_t *team) {
+        team->parent = NULL;
+}
+
 static void bfs(player_t *player) {
         int cohorts[NUM_COHORTS] = { 1, 0 };
         llist_t *cohort_queue = llist_create();
         player->level = 0;
-        // player_t *start = player;
         player->parent = player;
         llist_enqueue(cohort_queue, player);
 
@@ -196,21 +204,11 @@ static void bfs(player_t *player) {
                                 player_t *next = (player_t *)llist_dequeue(team->roster);
                                 if (next->level || (next == player)) {
                                         continue;
-                                        // printf("Found a current entry\n");
                                 } else {
                                         next->level = (curr->level + 1);
                                         cohorts[next->level] += 1;
                                         llist_enqueue(cohort_queue, next);
                                 }
-                                // if (next->parent || next == player) {
-                                //         continue;
-                                // } else{
-                                //         next->level = (curr->level + 1);
-                                //         cohorts[next->level] += 1;
-                                //         next->parent = curr;
-                                //         llist_enqueue(cohort_queue, next);
-
-                                // }
                         }
                 }
         }   
@@ -266,12 +264,87 @@ static void print_distance(player_t *end) {
         }
 }
 
-void find_small_teams(hash_t *team_table) {
-        llist_t *teams = find_smaller_teams(team_table);
-        while (!llist_is_empty(teams)) {
-                team_t *team = (team_t *)llist_dequeue(teams);
-                if (llist_get_size(team->roster) == 31) {
-                        printf("team: %s %s\n", team->year, team->team_name);
+
+struct oracle_t {
+        player_t *best;
+        player_t *worst;
+        float best_sep;
+        float worst_sep;
+};
+
+static void oracle_search(player_t *player, struct oracle_t *or_results) {
+        int cohorts[NUM_COHORTS] = { 1, 0 };
+        llist_t *cohort_queue = llist_create();
+        player->level = 0;
+        llist_enqueue(cohort_queue, player);
+        while (!llist_is_empty(cohort_queue)) {
+                player_t *curr = (player_t *)llist_dequeue(cohort_queue);
+                llist_iter_t teams = { 0 };
+                llist_create_iter(curr->teams, &teams);
+                while ((!llist_iter_is_empty(teams))) {
+                        team_t *team = (team_t *)llist_iter_next(&teams);
+                        if (team->parent) {
+                                continue;
+                        }
+                        team->parent = curr;
+                        llist_iter_t players = { 0 };
+                        llist_create_iter(team->roster, &players);
+                        while (!llist_iter_is_empty(players)) {
+                                player_t *next = (player_t *)llist_iter_next(&players);
+                                if (next->level || next == player) {
+                                        continue;
+                                } else {
+                                        next->level = (curr->level + 1);
+                                        cohorts[next->level] += 1;
+                                        llist_enqueue(cohort_queue, next);
+                                }
+
+                                if ((2 == next->level) && (cohorts[1] < 100)) {
+                                        llist_destroy(cohort_queue);
+                                        return;
+                                }
+                        }
                 }
         }
+        // llist_destroy(cohort_queue);
+
+        int total_connected = 0;
+        float avg_sep = 0.0;
+        for (int i = 0; i < NUM_COHORTS; ++i) {
+                total_connected += cohorts[i];
+                avg_sep += (i * cohorts[i]);
+        }
+        avg_sep = avg_sep / total_connected;
+        if (avg_sep > or_results->worst_sep) {
+                or_results->worst_sep = avg_sep;
+                or_results->worst = player;
+        }
+        
+        if (avg_sep < or_results->best_sep) {
+                or_results->best_sep = avg_sep;
+                or_results->best = player;
+        }
+}
+
+void player_oracle(hash_t *player_table, hash_t *team_table) {
+        struct oracle_t or_results = { 0 };
+        or_results.worst_sep = 0.0;
+        or_results.best_sep = FLT_MAX;
+        llist_t *players = get_player(player_table);
+        player_t *player;
+        int count = 0;
+        while (!llist_is_empty(players)) {
+                player = (player_t *)llist_dequeue(players);
+                oracle_search(player, &or_results);
+                reset_players(player_table, (del_f)reset);
+                reset_teams(team_table, (del_f)reset_team);
+                ++count;
+                if (0 == (count % 500)) {
+                        printf("Processed %d players\n", count);
+                } 
+        }
+        printf("And the winners are:\n");
+        printf("The center of the universe (since 1960) with a score of %.6f is %s\n", or_results.best_sep, or_results.best->name);
+        printf("The least connected NFL player with at least 100 connections of the NFL ");
+        printf("universe (since 1960) with a score of %.6f is %s\n", or_results.worst_sep, or_results.worst->name);
 }

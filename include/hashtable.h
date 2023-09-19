@@ -21,6 +21,9 @@ llist_t *find_teams(hash_t *table);
 // void hashtable_destroy(hash_t *table);
 void hashtable_destroy(l_opts *my_opts);
 llist_t * find_smaller_teams(hash_t *team_table);
+llist_t *get_player(hash_t *player_table);
+void reset_players(hash_t *player_table, del_f reset);
+void reset_teams(hash_t *team_table, del_f reset);
 #endif
 
 

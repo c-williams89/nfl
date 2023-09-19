@@ -181,12 +181,29 @@ void hashtable_destroy(l_opts *my_opts) {
 
 }
 
-llist_t * find_smaller_teams(hash_t *team_table) {
-        llist_t *teams = llist_create();
-        for (int i = 0; i < team_table->max_cap; ++i) {
-                if (team_table->entries[i]) {
-                        llist_enqueue(teams, team_table->entries[i]->data);
+llist_t *get_player(hash_t *player_table) {
+        llist_t *players = llist_create();
+        for (uint32_t i = 0; i < player_table->max_cap; ++i) {
+                if (player_table->entries[i]) {
+                        llist_enqueue(players, player_table->entries[i]->data);
                 }
         }
-        return teams;
+        return players;
+}
+
+void reset_players(hash_t *player_table, del_f reset) {
+        for (uint32_t i = 0; i < player_table->max_cap; ++i) {
+                if (player_table->entries[i]) {
+                        reset(player_table->entries[i]->data);
+                }
+        }
+
+}
+
+void reset_teams(hash_t *team_table, del_f reset) {
+        for (uint32_t i = 0; i < team_table->max_cap; ++i) {
+                if (team_table->entries[i]) {
+                        reset(team_table->entries[i]->data);
+                }
+        }
 }
