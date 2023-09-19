@@ -185,6 +185,10 @@ void reset(player_t *player) {
         player->level = 0;
 }
 
+void reset_team(team_t *team) {
+        team->parent = NULL;
+}
+
 static void bfs(player_t *player) {
         int cohorts[NUM_COHORTS] = { 1, 0 };
         llist_t *cohort_queue = llist_create();
@@ -262,10 +266,6 @@ static void print_distance(player_t *end) {
 }
 
 
-// static void reset_players() {
-
-// }
-
 struct oracle_t {
         player_t *best;
         player_t *worst;
@@ -284,6 +284,10 @@ static void oracle_search(player_t *player, struct oracle_t *or_results) {
                 llist_create_iter(curr->teams, &teams);
                 while ((!llist_iter_is_empty(teams))) {
                         team_t *team = (team_t *)llist_iter_next(&teams);
+                        if (team->parent) {
+                                continue;
+                        }
+                        team->parent = curr;
                         llist_iter_t players = { 0 };
                         llist_create_iter(team->roster, &players);
                         while (!llist_iter_is_empty(players)) {
@@ -302,30 +306,6 @@ static void oracle_search(player_t *player, struct oracle_t *or_results) {
                                 }
                         }
                 }
-
-
-
-                // llist_t *tmp = curr->teams;
-                // while (!llist_is_empty(tmp)) {
-                //         // team_t *tmp_team = (team_t *)llist_dequeue(tmp);
-                //         llist_t *tmp_roster = tmp_team->roster;
-                //         while (!llist_is_empty(tmp_roster)) {
-                //                 player_t *next = (player_t *)llist_dequeue(tmp_roster);
-                //                 if (next->level || next == player) {
-                //                         continue;
-                //                 } else {
-                //                         next->level = (curr->level + 1);
-                //                         cohorts[next->level] += 1;
-                //                         llist_enqueue(cohort_queue, next);
-                //                 }
-                                
-                //                 if ((next->level == 2) && (cohorts[1] < 100)) {
-                //                         llist_destroy(cohort_queue);
-                //                         return;
-                //                 }
-                        
-                //         }
-                // }
         }
         // llist_destroy(cohort_queue);
 
@@ -347,7 +327,7 @@ static void oracle_search(player_t *player, struct oracle_t *or_results) {
         }
 }
 
-void player_oracle(hash_t *player_table) {
+void player_oracle(hash_t *player_table, hash_t *team_table) {
         struct oracle_t or_results = { 0 };
         or_results.worst_sep = 0.0;
         or_results.best_sep = FLT_MAX;
@@ -359,6 +339,7 @@ void player_oracle(hash_t *player_table) {
                 // printf("Processing player: %s\n", player->name);
                 oracle_search(player, &or_results);
                 reset_players(player_table, (del_f)reset);
+                reset_teams(team_table, (del_f)reset_team);
                 ++count;
                 // if (count == 5) {
                 //         break;

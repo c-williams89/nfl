@@ -199,3 +199,11 @@ void reset_players(hash_t *player_table, del_f reset) {
         }
 
 }
+
+void reset_teams(hash_t *team_table, del_f reset) {
+        for (uint32_t i = 0; i < team_table->max_cap; ++i) {
+                if (team_table->entries[i]) {
+                        reset(team_table->entries[i]->data);
+                }
+        }
+}
