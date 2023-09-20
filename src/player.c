@@ -28,6 +28,7 @@ typedef struct team_t {
         char *year;
         llist_t *roster;
         void *parent;
+        int level;
 }team_t;
 
 enum { NUM_COHORTS = 10};
@@ -186,7 +187,8 @@ void reset(player_t *player) {
 }
 
 void reset_team(team_t *team) {
-        team->parent = NULL;
+        team->level = 0;
+        // team->parent = NULL;
 }
 
 static void bfs(player_t *player) {
@@ -200,6 +202,10 @@ static void bfs(player_t *player) {
                 player_t *curr = (player_t *)llist_dequeue(cohort_queue);
                 while (!llist_is_empty(curr->teams)) {
                         team_t *team = (team_t *)llist_dequeue(curr->teams);
+                        if (team->parent) {
+                                continue;
+                        }
+                        team->parent = curr;
                         while (!llist_is_empty(team->roster)) {
                                 player_t *next = (player_t *)llist_dequeue(team->roster);
                                 if (next->level || (next == player)) {
@@ -283,10 +289,10 @@ static void oracle_search(player_t *player, struct oracle_t *or_results) {
                 llist_create_iter(curr->teams, &teams);
                 while ((!llist_iter_is_empty(teams))) {
                         team_t *team = (team_t *)llist_iter_next(&teams);
-                        if (team->parent) {
+                        if (team->level) {
                                 continue;
                         }
-                        team->parent = curr;
+                        team->level = 1;
                         llist_iter_t players = { 0 };
                         llist_create_iter(team->roster, &players);
                         while (!llist_iter_is_empty(players)) {
