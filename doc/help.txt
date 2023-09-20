@@ -5,8 +5,8 @@
         nfl [FILE_OPTION] <FILE> <OPTION> [ARG]
 
     "DESCRIPTION"
-        The WOBC project nfl is a command\-line utility tool for examining a TSV 
-        file of NFL player statistics, and displaying statistics based on provided option.
+        nfl is a command-line utility tool for examining a TSV file of NFL player 
+        statistics, and displaying statistics based on provided option.
         Running nfl always requires one option, with additional option for specifying file.
 
     "OPTIONS"

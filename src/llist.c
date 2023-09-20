@@ -72,7 +72,6 @@ void *llist_dequeue(llist_t * list)
 	return data;
 }
 
-
 bool llist_is_empty(llist_t * llist)
 {
 	if (!llist) {
@@ -81,14 +80,15 @@ bool llist_is_empty(llist_t * llist)
 	return llist->size > 0 ? false : true;
 }
 
-void *llist_peek(llist_t *list, int idx) {
+void *llist_peek(llist_t * list, int idx)
+{
 	if (!list) {
 		return 0;
 	}
 	node_t *node = list->head;
 	while (idx--) {
 		node = node->next;
-	}	
+	}
 	return node->data;
 }
 
@@ -110,21 +110,25 @@ void llist_destroy(llist_t * llist)
 	free(llist);
 }
 
-int llist_get_size(llist_t *llist) {
+int llist_get_size(llist_t * llist)
+{
 	return llist->size;
 }
 
-bool llist_create_iter(llist_t *llist, llist_iter_t *iter) {
+bool llist_create_iter(llist_t * llist, llist_iter_t * iter)
+{
 	*iter = llist->head;
 	return true;
 }
 
-void *llist_iter_next(llist_iter_t *iter) {
+void *llist_iter_next(llist_iter_t * iter)
+{
 	llist_iter_t tmp = *iter;
 	*iter = tmp->next;
 	return tmp->data;
 }
 
-bool llist_iter_is_empty(llist_iter_t iter) {
+bool llist_iter_is_empty(llist_iter_t iter)
+{
 	return (!iter) ? true : false;
 }
