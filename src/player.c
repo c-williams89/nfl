@@ -313,7 +313,7 @@ static void oracle_search(player_t *player, struct oracle_t *or_results) {
                         }
                 }
         }
-        llist_destroy(cohort_queue);
+        free(cohort_queue);
 
         int total_connected = 0;
         float avg_sep = 0.0;
