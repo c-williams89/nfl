@@ -29,19 +29,19 @@ llist_t *llist_create()
 	return llist;
 }
 
-bool llist_enqueue(llist_t * llist, void *data)
+int llist_enqueue(llist_t * llist, void *data)
 {
+	int exit_status = 0;
 	if (!llist || !data) {
-		return false;
+		goto EXIT;
 	}
 
 	node_t *node = calloc(1, sizeof(*node));
 	if (!node) {
-		return false;
+		goto EXIT;
 	}
 
 	node->data = data;
-	// node->next = NULL;
 
 	if (llist->tail) {
 		llist->tail->next = node;
@@ -52,15 +52,20 @@ bool llist_enqueue(llist_t * llist, void *data)
 	llist->tail = node;
 	++llist->size;
 
-	return true;
+	exit_status = 1;
+
+EXIT:
+	return exit_status;
 }
 
 void *llist_dequeue(llist_t * list)
 {
+	void *data = NULL;
 	if (!list || !list->head) {
-		return NULL;
+		goto EXIT;
 	}
-	void *data = list->head->data;
+
+	data = list->head->data;
 	struct node_t *tmp = list->head;
 	list->head = list->head->next;
 	free(tmp);
@@ -68,7 +73,10 @@ void *llist_dequeue(llist_t * list)
 	if (!list->head) {
 		list->tail = list->head;
 	}
+
 	--list->size;
+
+EXIT:
 	return data;
 }
 
@@ -80,17 +88,19 @@ bool llist_is_empty(llist_t * llist)
 	return llist->size > 0 ? false : true;
 }
 
-void *llist_peek(llist_t * list, int idx)
-{
-	if (!list) {
-		return 0;
-	}
-	node_t *node = list->head;
-	while (idx--) {
-		node = node->next;
-	}
-	return node->data;
-}
+// void *llist_peek(llist_t * list, int idx)
+// {
+// 	node_t *node = NULL;
+// 	if (!list) {
+// 		return 0;
+// 	}
+
+// 	node_t *node = list->head;
+// 	while (idx--) {
+// 		node = node->next;
+// 	}
+// 	return node->data;
+// }
 
 void llist_destroy(llist_t * llist)
 {
@@ -110,19 +120,29 @@ void llist_destroy(llist_t * llist)
 	free(llist);
 }
 
-int llist_get_size(llist_t * llist)
-{
-	return llist->size;
-}
+// int llist_get_size(llist_t * llist)
+// {
+// 	return (!llist) ? 0 : llist->size;
+// }
 
-bool llist_create_iter(llist_t * llist, llist_iter_t * iter)
+int llist_create_iter(llist_t * llist, llist_iter_t * iter)
 {
+	int exit_status = 0;
+	if (!llist || !llist->head || !iter) {
+		goto EXIT;
+	}
 	*iter = llist->head;
-	return true;
+	exit_status = 1;
+EXIT:
+	return exit_status;
 }
 
 void *llist_iter_next(llist_iter_t * iter)
 {
+	if (!iter) {
+		return NULL;
+	}
+	
 	llist_iter_t tmp = *iter;
 	*iter = tmp->next;
 	return tmp->data;
