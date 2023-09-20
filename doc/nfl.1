@@ -1,0 +1,191 @@
+.TH "nfl" "1" "25 September 2023" "WO1 Clayton Williams" "WOBC Project"
+.SH "NAME"
+.PP 
+nfl - calculate degrees of separation between any two players
+.SH "SYNOPSIS"
+\fBnfl\fR [\fIFILE_OPTION\fR] <\fIFILE\fR> <\fIOPTION\fR> [\fIARG\fR]
+.sh "DESCRIPTION"
+.PP
+The WOBC project \fBnfl\fR is a command\-line utility tool for examining a TSV
+file of NFL player statistics, and displaying statistics based on provided option.
+.PP
+Running \fBnfl\fR always requires one option, with additional option for specifying 
+file.
+.SH "OPTIONS"
+.PP
+\fBnfl\fR accepts one, and only one of the following options in long form.
+.PP
+\fB--player\fR [\fIPLAYER\fR]
+.RS 4
+Prints the id, name, position, college, and list of NFL teams of \fIPLAYER\fR. \fIPLAYER\fR
+can be name or id and is case\-sensitive.
+.br
+.RE
+\fB--search\fR [\fIPARAM\fR]
+.RS 4
+Prints a list of players who's name or college contains \fIPARAM\fR.
+.br
+.RE
+\fB--stats\fR [\fIPLAYER\fR]
+.RS 4
+Prints a table of number of other players at each degree of separation from \fIPLAYER\fR,
+up to 9 degrees. \fIPLAYER\fR can be name or id and is case\-sensitive.
+.br
+.RE
+\fB--distance\fR [\fIPLAYER1\fR] [\fIPLAYER2\fR]
+.RS 4
+Finds and prints the shortest distance between \fIPLAYER1\fR and \fIPLAYER2\fR showing 
+connections through teams and year.
+.br
+.RE
+\fB--teams\fR
+.RS 4
+Print a list of unique teams.
+.br
+.RE
+\fB--roster\fR [\fITEAM_NAME\fR] [\fIYEAR\fR]
+.RS 4
+Print a roster, player id, name, position, and college, of specific \fITEAM_NAME\fR,
+\fIYEAR\fR combination.
+.br
+.RE
+\fB--oracle\fR
+.RS 4
+Print the players with the lowest and highest average separation as determined from
+\fB--stats\fR. Players with fewer than 100 connections at level 1 are ignored.
+.SH "FILE_OPTION"
+.PP
+The following option can be used in short form in conjunction with any of the previous
+option commands.
+.PP
+\fB-f\fR <\fIFILE\fR>
+.RS 4
+Program will read from \fIFILE\fR rather than default file included with the program.
+.SH "ADDITIONAL OPTION"
+.PP
+The following option can be used in short form in conjunction with the \fB--distance\fR
+option.
+.PP
+\fB-i\fR <\fIPLAYER\fR>
+.RS 4
+Used to remove players from consideration when invoking the \fB--distance\fR command.
+\fB-i\fR can be used multiple times in each program call, but each option will take
+one and only one \fIPLAYER\fB argument.
+.br
+\fbnfl -i "Derrick Henry" -i "Peyton Manning"
+.SH "USAGE AND EXAMPLES"
+.PP
+\fBnfl --player "Randy Dixon"\fR
+.br
+.specify.if n\{\
+.RS 4
+./}
+.nf
+DixoRa20	Randy Dixon	 	Pittsburgh
+	1987 - Indianapolis Colts
+	1988 - Indianapolis Colts
+	1989 - Indianapolis Colts
+	1990 - Indianapolis Colts
+	1991 - Indianapolis Colts
+	1992 - Indianapolis Colts
+	1993 - Indianapolis Colts
+	1994 - Indianapolis Colts
+	1995 - Indianapolis Colts
+.fi
+.PP
+\fBnfl --search "Cornell"\fR
+.br
+.specify.if n\{\
+.RS 4
+./}
+.nf
+	TaglJo20	John Tagliaferri	Cornell
+	CornBo20	Bo Cornell	Washington
+	TaltKe20	Ken Talton	Cornell
+	WaltBr00	Bryan Walters	Cornell
+	PaynSe20	Seth Payne	Cornell
+/...
+.fi
+.PP
+\fBnfl --stats "Randy Dixon"\fR
+.br
+.specify.if n\{\
+.RS 4
+./}
+.nf
+Network stats for Randy Dixon
+0 -- 1 cohort
+1 -- 273 cohorts
+2 -- 8386 cohorts
+3 -- 9581 cohorts
+4 -- 2249 cohorts
+5 -- 0 cohorts
+6 -- 0 cohorts
+7 -- 0 cohorts
+8 -- 0 cohorts
+9 -- 0 cohorts
+Average separation 2.673694
+.fi
+.PP
+\fBnfl --roster "Dallas Cowboys" 1970\fR
+.br
+.specify.if n\{\
+.RS 4
+./}
+.nf
+	AddeHe00	Herb Adderley	LCB	Michigan St.
+	AdkiMa00	Margene Adkins	 	Henderson JC
+	AndrGe00	George Andrie	RDE	Marquette
+	AsheBo20	Bob Asher	RT	Vanderbilt
+/...
+.fi
+.PP
+\fBnfl --teams
+.br
+.specify.if n\{\
+.RS 4
+./}
+.nf
+Arizona Cardinals
+Atlanta Falcons
+Baltimore Colts
+Baltimore Ravens
+Boston Patriots
+/...
+.fi
+.PP
+\fBnfl --distance "Johnny Manziel" "Roger Staubach"\fR
+.br
+.specify.if n\{\
+.RS 4
+./}
+.nf
+Roger Staubach played for Dallas Cowboys in 1974 with Too Tall Jones
+Too Tall Jones played for Dallas Cowboys in 1989 with Troy Aikman
+Troy Aikman played for Dallas Cowboys in 1998 with Flozell Adams
+Flozell Adams played for Dallas Cowboys in 2006 with Miles Austin
+Miles Austin played for Cleveland Browns in 2014 with Johnny Manziel
+.fi
+.PP
+\fBnfl --oracle\fR
+.br
+.specify.if n\{\
+.RS 4
+.nf
+And the winners are:
+The center of the universe (since 1960) with a score of 2.289849 is Morten Andersen
+The least connected NFL player with at least 100 connections of the NFL universe (since 1960) with a score of 4.207321 is Dewey Bohling
+.fi
+.PP
+.SH "RETURN VALUES"
+.PP
+On success, \fBnfl\fR returns 0. On failure, \fBnfl\fR returns 1, sets \fIerrno\fR if appropriate,
+and writes error messages to \fIstderr\fR.
+.SH "LICENSE"
+.SH "AUTHOR"
+.PP
+WO1 Clayton E. Williams
+.PP
+clayton.e.williams15.mil@army.mil
+.SH "COPYRIGHT"
+.PP
