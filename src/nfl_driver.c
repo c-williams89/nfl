@@ -25,9 +25,10 @@ uint64_t hash(char *key) {
 int main (int argc, char **argv) {
         int c;
         l_opts *my_opts = calloc(1, sizeof(l_opts));
-        FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
-        // char *file = "./test/test_data/nfldata.txt";
 
+        FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
+        FILE *help = NULL;
+        
         while (1) { //TODO: Figure out better way to write this
                 int option_index = 0;
                 struct option long_options[] = {
@@ -38,9 +39,10 @@ int main (int argc, char **argv) {
                         {"teams", no_argument, NULL, 't'},
                         {"distance", required_argument, NULL, 'd'},
                         {"oracle", no_argument, NULL, 'o'},
+                        {"help", no_argument, NULL, 'h'},
                         {0, 0, 0, 0}
                 };
-                c = getopt_long(argc, argv, "-:f:", long_options, &option_index);
+                c = getopt_long(argc, argv, "-:f:i:", long_options, &option_index);
                 if (-1 == c) {
                         break;
                 }
@@ -104,6 +106,18 @@ int main (int argc, char **argv) {
                                 }
                                 my_opts->option = 'o';
                                 break;
+                        case 'h':
+                                help = fopen("./doc/help.txt", "r");
+                                if (!help) {
+                                        printf("oh no");
+                                        break;
+                                }
+                                char line[255];
+                                while (fgets(line, 255, help)) {
+                                        fprintf(stdout, "%s", line);
+                                }
+                                fclose(help);
+                                goto FILE_EXIT;
                         case '?':
                                 goto FILE_EXIT;
                         case ':':
@@ -134,7 +148,6 @@ int main (int argc, char **argv) {
         }
         my_opts->team_table = team_table;
         my_opts->player_table = player_table;
-        // find_small_teams(my_opts->team_table);
         print_helper(my_opts);
         hashtable_destroy(my_opts);
 
