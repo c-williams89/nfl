@@ -39,18 +39,33 @@ static void print_distance(player_t * start);
 
 static team_t *team_create(char *year, char *name, player_t * player)
 {
-	team_t *team = calloc(1, sizeof(*team));
+	team_t *team = NULL;
+	if (!year || !name || !player) {
+		goto EXIT;
+	}
+
+	team = calloc(1, sizeof(*team));
+	if (!team) {
+		goto EXIT;
+	}
+
 	team->year = year;
 	team->team_name = name;
 	team->roster = llist_create();
 	llist_enqueue(team->roster, player);
+
+EXIT:
 	return team;
 }
 
 player_t *player_create(hash_t * team_table, char *current)
 {
-
-	player_t *player = calloc(1, sizeof(*player));
+	player_t *player = NULL;
+	if (!team_table || !current) {
+		goto EXIT;
+	}
+	
+	player = calloc(1, sizeof(*player));
 	if (!player) {
 		perror("player_create");
 		errno = 0;
@@ -90,33 +105,56 @@ player_t *player_create(hash_t * team_table, char *current)
 	return player;
 }
 
-bool player_insert(player_t * player, hash_t * ht)
+int player_insert(player_t * player, hash_t * ht)
 {
+	int exit_status = 0;
+	if (!player || !ht) {
+		goto EXIT;
+	}
 	char *key = player->id;
-	hash_table_insert(ht, key, player);
-	return true;
+	exit_status = hash_table_insert(ht, key, player);
+	
+EXIT:
+	return exit_status;
 }
 
 int compare_player(player_t * player, char *val)
 {
-	if (0 == strncmp(player->name, val, strlen(player->name))) {
-		return 1;
+	int exit_status = 0;
+	if (!player || !val) {
+		goto EXIT;
 	}
-	return 0;
+
+	if (0 == strncmp(player->name, val, strlen(player->name))) {
+		exit_status = 1;
+	}
+
+EXIT:
+	return exit_status;
 }
 
 int compare_fields(player_t * player, char *val)
 {
-	// Will hand a player and compare val against player name or college
-	if (strstr(player->name, val) || strstr(player->college, val)) {
-		return 1;
+	int exit_status = 0;
+	if (!player || !val) {
+		goto EXIT;
 	}
 
-	return 0;
+	if (strstr(player->name, val) || strstr(player->college, val)) {
+		exit_status = 1;
+	}
+
+EXIT:
+	return exit_status;
 }
 
 void print_player(char *player_arg, hash_t * player_table)
 {
+	if (!player_arg || !player_table) {
+		fprintf(stderr, "print_player: invalid argument - NULL\n");
+		return;
+	}
+
 	player_t *player;
 
 	if (strpbrk(player_arg, "0123456789")) {
@@ -140,8 +178,18 @@ void print_player(char *player_arg, hash_t * player_table)
 
 void print_search_results(char *search_param, hash_t * player_table)
 {
+	if (!search_param || !player_table) {
+		fprintf(stderr, "print_search_results: invalid argument - NULL\n");
+		return;
+	}
+
 	llist_t *search_results =
 	    find_matches(player_table, search_param, (comp_f) compare_fields);
+	if (!search_results) {
+		fprintf(stderr, "print_search_results: No matching params\n");
+		return;
+	}
+
 	while (!llist_is_empty(search_results)) {
 		player_t *player = (player_t *) llist_dequeue(search_results);
 		printf("%s\t%s\t%s\n", player->id, player->name,
@@ -151,6 +199,11 @@ void print_search_results(char *search_param, hash_t * player_table)
 
 void print_teams(hash_t * team_table)
 {
+	if (!team_table) {
+		fprintf(stderr, "print_teams: invalid argument - NULL\n");
+		return;
+	}
+
 	llist_t *team_results = find_teams(team_table);
 	trie_t *team_trie = trie_create();
 	while (!llist_is_empty(team_results)) {
@@ -165,7 +218,17 @@ void print_teams(hash_t * team_table)
 
 void print_roster(hash_t * team_table, char *key)
 {
+	if (!team_table || !key) {
+		fprintf(stderr, "print_roster: invalid argument - NULL\n");
+		return;
+	}
+
 	team_t *team = find(team_table, key);
+	if (!team) {
+		fprintf(stderr, "print_roster: team not found\n");
+		return;
+	}
+
 	while (!llist_is_empty(team->roster)) {
 		player_t *player = (player_t *) llist_dequeue(team->roster);
 		printf("\t%s\t%s\t%s\t%s\n", player->id, player->name,
@@ -175,21 +238,32 @@ void print_roster(hash_t * team_table, char *key)
 
 void player_stats(hash_t * player_table, char *name)
 {
+	if (!player_table || !name) {
+		fprintf(stderr, "player_stats: invalid argument - NULL\n");
+		return;
+	}
 	// TODO: Incorporate search by name or id
 	player_t *player =
 	    find_no_key(player_table, name, (comp_f) compare_player);
-	// if (player) {
-	//         bfs(player);
-	// }
+	if (!player) {
+		fprintf(stderr, "player_stats: player does not exist\n");
+		return;
+	}
 	bfs(player);
 }
 
 void player_distance(hash_t * player_table, char *start, char *end)
 {
+	if (!player_table || !start || !end) {
+		fprintf(stderr, "player_distance: invalid argument - NULL\n");
+		return;
+	}
+
 	player_t *player1 =
 	    find_no_key(player_table, start, (comp_f) compare_player);
 	player_t *player2 =
 	    find_no_key(player_table, end, (comp_f) compare_player);
+	
 	if (calc_distance(player1, player2)) {
 		print_distance(player2);
 	}
@@ -197,28 +271,44 @@ void player_distance(hash_t * player_table, char *start, char *end)
 
 void player_destroy(player_t * player)
 {
+	if (!player) {
+		return;
+	}
+
 	llist_destroy(player->teams);
 	free(player->id);
 }
 
 void team_destroy(team_t * team)
 {
+	if (!team) {
+		return;
+	}
 	llist_destroy(team->roster);
 }
 
 void reset(player_t * player)
 {
+	if (!player) {
+		return;
+	}
+
 	player->level = 0;
 }
 
 void reset_team(team_t * team)
 {
+	if (!team) {
+		return;
+	}
 	team->level = 0;
-	// team->parent = NULL;
 }
 
 static void bfs(player_t * player)
 {
+	if (!player) {
+		return;
+	}
 	int cohorts[NUM_COHORTS] = { 1, 0 };
 	llist_t *cohort_queue = llist_create();
 	player->level = 0;
@@ -262,6 +352,10 @@ static void bfs(player_t * player)
 static bool calc_distance(player_t * start, player_t * end)
 {
 	bool b_route_found = false;
+	if (!start || !end) {
+		goto EXIT;
+	}
+
 	llist_t *queue = llist_create();
 	start->parent = start;
 	llist_enqueue(queue, start);
@@ -292,6 +386,10 @@ static bool calc_distance(player_t * start, player_t * end)
 
 static void print_distance(player_t * end)
 {
+	if (!end) {
+		return;
+	}
+
 	player_t *player = end;
 
 	while (player->parent != player) {
@@ -312,6 +410,10 @@ struct oracle_t {
 
 static void oracle_search(player_t * player, struct oracle_t *or_results)
 {
+	if (!player || !or_results) {
+		return;
+	}
+
 	int cohorts[NUM_COHORTS] = { 1, 0 };
 	llist_t *cohort_queue = llist_create();
 	player->level = 0;
@@ -369,6 +471,10 @@ static void oracle_search(player_t * player, struct oracle_t *or_results)
 
 void player_oracle(hash_t * player_table, hash_t * team_table)
 {
+	if (!player_table || !team_table) {
+		return;
+	}
+	
 	struct oracle_t or_results = { 0 };
 	or_results.worst_sep = 0.0;
 	or_results.best_sep = FLT_MAX;
