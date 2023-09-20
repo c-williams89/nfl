@@ -289,6 +289,7 @@ static void oracle_search(player_t *player, struct oracle_t *or_results) {
                 llist_create_iter(curr->teams, &teams);
                 while ((!llist_iter_is_empty(teams))) {
                         team_t *team = (team_t *)llist_iter_next(&teams);
+
                         if (team->level) {
                                 continue;
                         }
@@ -312,7 +313,7 @@ static void oracle_search(player_t *player, struct oracle_t *or_results) {
                         }
                 }
         }
-        // llist_destroy(cohort_queue);
+        llist_destroy(cohort_queue);
 
         int total_connected = 0;
         float avg_sep = 0.0;
@@ -349,6 +350,7 @@ void player_oracle(hash_t *player_table, hash_t *team_table) {
                         printf("Processed %d players\n", count);
                 } 
         }
+        free(players);
         printf("And the winners are:\n");
         printf("The center of the universe (since 1960) with a score of %.6f is %s\n", or_results.best_sep, or_results.best->name);
         printf("The least connected NFL player with at least 100 connections of the NFL ");
