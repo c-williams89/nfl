@@ -28,6 +28,7 @@ typedef struct team_t {
         char *year;
         llist_t *roster;
         void *parent;
+        int level;
 }team_t;
 
 enum { NUM_COHORTS = 10};
@@ -186,7 +187,8 @@ void reset(player_t *player) {
 }
 
 void reset_team(team_t *team) {
-        team->parent = NULL;
+        team->level = 0;
+        // team->parent = NULL;
 }
 
 static void bfs(player_t *player) {
@@ -200,6 +202,10 @@ static void bfs(player_t *player) {
                 player_t *curr = (player_t *)llist_dequeue(cohort_queue);
                 while (!llist_is_empty(curr->teams)) {
                         team_t *team = (team_t *)llist_dequeue(curr->teams);
+                        if (team->parent) {
+                                continue;
+                        }
+                        team->parent = curr;
                         while (!llist_is_empty(team->roster)) {
                                 player_t *next = (player_t *)llist_dequeue(team->roster);
                                 if (next->level || (next == player)) {
@@ -283,10 +289,11 @@ static void oracle_search(player_t *player, struct oracle_t *or_results) {
                 llist_create_iter(curr->teams, &teams);
                 while ((!llist_iter_is_empty(teams))) {
                         team_t *team = (team_t *)llist_iter_next(&teams);
-                        if (team->parent) {
+
+                        if (team->level) {
                                 continue;
                         }
-                        team->parent = curr;
+                        team->level = 1;
                         llist_iter_t players = { 0 };
                         llist_create_iter(team->roster, &players);
                         while (!llist_iter_is_empty(players)) {
@@ -306,7 +313,7 @@ static void oracle_search(player_t *player, struct oracle_t *or_results) {
                         }
                 }
         }
-        // llist_destroy(cohort_queue);
+        llist_destroy(cohort_queue);
 
         int total_connected = 0;
         float avg_sep = 0.0;
@@ -343,6 +350,7 @@ void player_oracle(hash_t *player_table, hash_t *team_table) {
                         printf("Processed %d players\n", count);
                 } 
         }
+        free(players);
         printf("And the winners are:\n");
         printf("The center of the universe (since 1960) with a score of %.6f is %s\n", or_results.best_sep, or_results.best->name);
         printf("The least connected NFL player with at least 100 connections of the NFL ");
