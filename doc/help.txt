@@ -1,0 +1,50 @@
+    "NAME"
+        nfl - calculate degrees of separation between any two players
+
+    "SYNOPSIS"
+        nfl [FILE_OPTION] <FILE> <OPTION> [ARG]
+
+    "DESCRIPTION"
+        The WOBC project nfl is a command\-line utility tool for examining a TSV 
+        file of NFL player statistics, and displaying statistics based on provided option.
+        Running nfl always requires one option, with additional option for specifying file.
+
+    "OPTIONS"
+        nfl accepts one, and only one of the following options in long form.
+            --player [PLAYER]
+                Prints the id, name, position, college, and list of NFL teams of PLAYER. 
+                PLAYER can be name or id and is case\-sensitive.
+
+            --search [PARAM]
+                Prints a list of players who's name or college contains PARAM.
+
+            --stats [PLAYER]
+                Prints a table of number of other players at each degree of separation 
+                from PLAYER, up to 9 degrees. PLAYER can be name or id and is case-sensitive.
+
+            --distance [PLAYER1] [PLAYER2]
+                Finds and prints the shortest distance between PLAYER1 and PLAYER2 showing connections through teams and year.
+
+            --teams
+                Print a list of unique teams.
+
+            --roster [TEAM_NAME] [YEAR]
+                Print a roster, player id, name, position, and college, of specific TEAM_NAME, YEAR combination.
+
+            --oracle
+                Print the players with the lowest and highest average separation as determined from
+
+            --stats. Players with fewer than 100 connections at level 1 are ignored.
+
+    "FILE_OPTION"
+        The following option can be used in short form in conjunction with any of the previous option commands.
+            -f <FILE>
+                Program will read from FILE rather than default file included with the program.
+
+    "ADDITIONAL OPTION"
+        The following option can be used in short form in conjunction with the --distance option.
+            -i <PLAYER>
+                Used to remove players from consideration when invoking the --distance command. 
+                -i can be used multiple times in each program call, but each option will take one and only one PLAYER argument.
+            nfl -i "Derrick Henry" -i "Peyton Manning"
+
