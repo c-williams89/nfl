@@ -20,8 +20,6 @@ typedef struct entry_t {
 	char *key;
 } entry_t;
 
-// HACK: Re-write entries to be a single pointer, each index is an entry, rather
-//  than a pointer to an entry
 typedef struct hash_t {
 	entry_t **entries;
 	hash_f hash_function;
@@ -67,18 +65,28 @@ hash_t *hash_table_create(uint32_t size, hash_f hf)
 
 static entry_t *create_entry(void *data, char *key)
 {
-	entry_t *entry = calloc(1, sizeof(*entry));
-	// TODO: ABC
+	entry_t *entry = NULL;
+	if (!data || !key) {
+		goto EXIT;
+	}
+	
+	entry = calloc(1, sizeof(*entry));
+	if (!entry) {
+		goto EXIT;
+	}
+
 	entry->data = data;
 	entry->key = key;
+EXIT:
 	return entry;
 }
 
-bool hash_table_insert(hash_t * ht, char *key, void *data)
+int hash_table_insert(hash_t * ht, char *key, void *data)
 {
+	int exit_status = 0;
 	if (!ht || !key || !data) {
 		fprintf(stderr, "hash_table_insert\n");
-		return false;
+		goto EXIT;
 	}
 
 	if (ht->curr_size >= LOAD(ht->max_cap)) {
@@ -90,18 +98,23 @@ bool hash_table_insert(hash_t * ht, char *key, void *data)
 	uint64_t index = (ht->hash_function(key) % ht->max_cap);
 	for (uint32_t i = 0; i < ht->max_cap; ++i) {
 		uint32_t try = (i + index) % ht->max_cap;
-
 		if (!ht->entries[try] || ht->entries[try]->b_to_delete) {
 			ht->entries[try] = entry;
 			ht->curr_size += 1;
 			break;
 		}
 	}
-	return true;
+	exit_status = 1;
+EXIT:
+	return exit_status;
 }
 
 void *find(hash_t * table, char *key)
 {
+	void *data = NULL;
+	if (!table || !key) {
+		goto EXIT;
+	}
 	uint64_t index = (table->hash_function(key) % table->max_cap);
 	for (uint32_t i = 0; i < table->max_cap; ++i) {
 		int try = (i + index) % table->max_cap;
@@ -109,31 +122,44 @@ void *find(hash_t * table, char *key)
 			if (0 ==
 			    (strncmp
 			     (table->entries[try]->key, key, strlen(key)))) {
-				return table->entries[try]->data;
+				data =  table->entries[try]->data;
+				goto EXIT;
 			}
 		}
 	}
 
-	return NULL;
+EXIT:
+	return data;
 }
 
 void *find_no_key(hash_t * table, char *val, comp_f compare)
 {
 	void *data = NULL;
+	if (!table || !val || !compare) {
+		goto EXIT;
+	}
+
 	for (uint32_t i = 0; i < table->max_cap; ++i) {
 		if (table->entries[i]) {
 			if (compare(table->entries[i]->data, val)) {
 				data = table->entries[i]->data;
+				goto EXIT;
 			}
 		}
 	}
 
+EXIT:
 	return data;
 }
 
 llist_t *find_matches(hash_t * table, char *val, comp_f compare)
 {
-	llist_t *search_results = llist_create();
+	llist_t *search_results = NULL;
+	if (!table || !val || !compare) {
+		goto EXIT;
+	}
+
+	search_results = llist_create();
 	for (uint32_t i = 0; i < table->max_cap; ++i) {
 		if (table->entries[i]) {
 			if (compare(table->entries[i]->data, val)) {
@@ -142,24 +168,31 @@ llist_t *find_matches(hash_t * table, char *val, comp_f compare)
 			}
 		}
 	}
+EXIT:
 	return search_results;
 }
 
 llist_t *find_teams(hash_t * table)
 {
-	llist_t *team_results = llist_create();
+	llist_t *team_results = NULL;
+	if (!table) {
+		goto EXIT;
+	}
+
+	team_results = llist_create();
 	for (uint32_t i = 0; i < table->max_cap; ++i) {
 		if (table->entries[i]) {
 			llist_enqueue(team_results, table->entries[i]->data);
 		}
 	}
 
+EXIT:	
 	return team_results;
 }
 
 void hashtable_destroy(l_opts * my_opts)
 {
-	if (!my_opts) {
+	if (!my_opts || !my_opts->team_table || !!my_opts->player_table) {
 		return;
 	}
 
@@ -195,17 +228,27 @@ void hashtable_destroy(l_opts * my_opts)
 
 llist_t *get_player(hash_t * player_table)
 {
-	llist_t *players = llist_create();
+	llist_t *players = NULL;
+	if (!player_table) {
+		goto EXIT;
+	}
+	players = llist_create();
 	for (uint32_t i = 0; i < player_table->max_cap; ++i) {
 		if (player_table->entries[i]) {
 			llist_enqueue(players, player_table->entries[i]->data);
 		}
 	}
+
+EXIT:
 	return players;
 }
 
 void reset_players(hash_t * player_table, del_f reset)
 {
+	if (!player_table || !reset) {
+		return;
+	}
+
 	for (uint32_t i = 0; i < player_table->max_cap; ++i) {
 		if (player_table->entries[i]) {
 			reset(player_table->entries[i]->data);
@@ -216,6 +259,10 @@ void reset_players(hash_t * player_table, del_f reset)
 
 void reset_teams(hash_t * team_table, del_f reset)
 {
+	if (!team_table || !reset) {
+		return;
+	}
+	
 	for (uint32_t i = 0; i < team_table->max_cap; ++i) {
 		if (team_table->entries[i]) {
 			reset(team_table->entries[i]->data);
