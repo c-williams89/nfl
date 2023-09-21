@@ -57,7 +57,21 @@ START_TEST(test_llist_dequeue_invalid) {
                 llist_dequeue(llist);
         }
         ck_assert_ptr_eq(llist_dequeue(llist), NULL);
-        
+
+}END_TEST
+
+START_TEST(test_llist_is_empty) {
+        llist_t *llist = NULL;
+        ck_assert_int_eq(llist_is_empty(llist), 0);
+        int num_elements = 10;
+        llist = llist_create();
+        ck_assert_int_eq(llist_is_empty(llist), 1);
+        llist = populate_list(num_elements);
+        ck_assert_int_eq(llist_is_empty(llist), 0);
+        for (int i = 0; i < num_elements; ++i) {
+                llist_dequeue(llist);
+        }
+        ck_assert_int_eq(llist_is_empty(llist), 1);
 }END_TEST
 
 TFun llist_tests[] = {
@@ -66,6 +80,7 @@ TFun llist_tests[] = {
         test_llist_enqueue_invalid,
         test_llist_dequeue_valid,
         test_llist_dequeue_invalid,
+        test_llist_is_empty,
         NULL
 };
 
