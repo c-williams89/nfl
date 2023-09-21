@@ -26,7 +26,7 @@ trie_t *trie_create(void)
 	return calloc(1, sizeof(trie_t));
 }
 
-void trie_destroy(trie_t **trie)
+void trie_destroy(trie_t ** trie)
 {
 	if (!trie || !*trie) {
 		return;
@@ -36,7 +36,6 @@ void trie_destroy(trie_t **trie)
 	}
 	free(*trie);
 }
-
 
 int trie_insert(trie_t ** trie, const char *target)
 {
@@ -74,7 +73,7 @@ int trie_insert(trie_t ** trie, const char *target)
 	if (!tmp->terminal) {
 		tmp->terminal = true;
 	}
-EXIT:
+ EXIT:
 	return exit_status;
 }
 

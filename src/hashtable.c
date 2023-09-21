@@ -69,7 +69,7 @@ static entry_t *create_entry(void *data, char *key)
 	if (!data || !key) {
 		goto EXIT;
 	}
-	
+
 	entry = calloc(1, sizeof(*entry));
 	if (!entry) {
 		goto EXIT;
@@ -77,7 +77,7 @@ static entry_t *create_entry(void *data, char *key)
 
 	entry->data = data;
 	entry->key = key;
-EXIT:
+ EXIT:
 	return entry;
 }
 
@@ -105,7 +105,7 @@ int hash_table_insert(hash_t * ht, char *key, void *data)
 		}
 	}
 	exit_status = 1;
-EXIT:
+ EXIT:
 	return exit_status;
 }
 
@@ -122,13 +122,13 @@ void *find(hash_t * table, char *key)
 			if (0 ==
 			    (strncmp
 			     (table->entries[try]->key, key, strlen(key)))) {
-				data =  table->entries[try]->data;
+				data = table->entries[try]->data;
 				goto EXIT;
 			}
 		}
 	}
 
-EXIT:
+ EXIT:
 	return data;
 }
 
@@ -148,7 +148,7 @@ void *find_no_key(hash_t * table, char *val, comp_f compare)
 		}
 	}
 
-EXIT:
+ EXIT:
 	return data;
 }
 
@@ -168,8 +168,8 @@ llist_t *find_matches(hash_t * table, char *val, comp_f compare)
 			}
 		}
 	}
-	
-EXIT:
+
+ EXIT:
 	return search_results;
 }
 
@@ -187,7 +187,7 @@ llist_t *find_teams(hash_t * table)
 		}
 	}
 
-EXIT:	
+ EXIT:
 	return team_results;
 }
 
@@ -241,7 +241,7 @@ llist_t *get_player(hash_t * player_table)
 		}
 	}
 
-EXIT:
+ EXIT:
 	return players;
 }
 
@@ -264,7 +264,7 @@ void reset_teams(hash_t * team_table, del_f reset)
 	if (!team_table || !reset) {
 		return;
 	}
-	
+
 	for (uint32_t i = 0; i < team_table->max_cap; ++i) {
 		if (team_table->entries[i]) {
 			reset(team_table->entries[i]->data);
