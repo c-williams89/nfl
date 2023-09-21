@@ -119,7 +119,7 @@ EXIT:
 	return exit_status;
 }
 
-int compare_player(player_t * player, char *val)
+static int compare_player(player_t * player, char *val)
 {
 	int exit_status = 0;
 	if (!player || !val) {
@@ -250,7 +250,7 @@ void player_stats(hash_t * player_table, char *name)
 	}
 
 	if (!player) {
-		fprintf(stderr, "player_stats: player does not exist\n");
+		fprintf(stderr, "nfl: player does not exist\n");
 		return;
 	}
 
@@ -264,10 +264,25 @@ void player_distance(hash_t * player_table, char *start, char *end)
 		return;
 	}
 
-	player_t *player1 =
-	    find_no_key(player_table, start, (comp_f) compare_player);
-	player_t *player2 =
-	    find_no_key(player_table, end, (comp_f) compare_player);
+	player_t *player1;
+	player_t *player2;
+	if (check_if_id(start)) {
+		player1 = find(player_table, start);
+	} else {
+		player1 = find_no_key(player_table, start, (comp_f) compare_player);
+	}
+
+	if (check_if_id(end)) {
+		player2 = find(player_table, end);
+
+	} else {
+		player2 = find_no_key(player_table, end, (comp_f) compare_player);
+	}
+
+	if (!player1 || !player2) {
+		fprintf(stderr, "nfl: player does not exist\n");
+		return;
+	}
 	
 	if (calc_distance(player1, player2)) {
 		print_distance(player2);
@@ -292,7 +307,7 @@ void team_destroy(team_t * team)
 	llist_destroy(team->roster);
 }
 
-void reset(player_t * player)
+static void reset(player_t * player)
 {
 	if (!player) {
 		return;
@@ -301,7 +316,7 @@ void reset(player_t * player)
 	player->level = 0;
 }
 
-void reset_team(team_t * team)
+static void reset_team(team_t * team)
 {
 	if (!team) {
 		return;

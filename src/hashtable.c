@@ -168,6 +168,7 @@ llist_t *find_matches(hash_t * table, char *val, comp_f compare)
 			}
 		}
 	}
+	
 EXIT:
 	return search_results;
 }
