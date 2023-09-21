@@ -4,6 +4,16 @@
 
 #include "../include/llist.h"
 
+llist_t *populate_list(int elements) {
+        llist_t *llist = llist_create();
+        for (int i = 0; i < elements; ++ i) {
+                int *x = calloc(1, sizeof(int));
+                *x = i;
+                llist_enqueue(llist, x);
+        }
+        return llist;
+}
+
 START_TEST(test_llist_create) {
         llist_t *llist = llist_create();
         ck_assert_ptr_ne(llist, NULL);
@@ -26,10 +36,36 @@ START_TEST(test_llist_enqueue_invalid) {
 
 }END_TEST
 
+START_TEST(test_llist_dequeue_valid) {
+        int num_elements = 20;
+        llist_t *llist = populate_list(num_elements);
+        for (int i = 0; i < num_elements; ++i) {
+                int *x = (int *)llist_dequeue(llist);
+                ck_assert_int_eq(*x, i);
+        }
+
+}END_TEST
+
+START_TEST(test_llist_dequeue_invalid) {
+        llist_t *llist = NULL;
+        ck_assert_ptr_eq(llist_dequeue(llist), NULL);
+        llist = llist_create();
+        ck_assert_ptr_eq(llist_dequeue(llist), NULL);
+        int num_elements = 10;
+        llist = populate_list(num_elements);
+        for (int i = 0; i < num_elements; ++i) {
+                llist_dequeue(llist);
+        }
+        ck_assert_ptr_eq(llist_dequeue(llist), NULL);
+        
+}END_TEST
+
 TFun llist_tests[] = {
         test_llist_create,
         test_llist_enqueue_valid,
         test_llist_enqueue_invalid,
+        test_llist_dequeue_valid,
+        test_llist_dequeue_invalid,
         NULL
 };
 
