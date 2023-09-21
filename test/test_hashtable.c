@@ -3,43 +3,47 @@
 
 #include "../include/hashtable.h"
 
-uint64_t hash(char *key) {
-        uint64_t hash = 5381;
-        int c;
-        c = *key++;
+uint64_t hash(char *key)
+{
+	uint64_t hash = 5381;
+	int c;
+	c = *key++;
 
-        while (key) {
-                hash = ((hash << 5) + hash) + c;
-                c = *key++;
-        }
-        return hash;
+	while (key) {
+		hash = ((hash << 5) + hash) + c;
+		c = *key++;
+	}
+	return hash;
 }
 
-START_TEST(test_hash_table_create_valid) {
-        ck_assert_ptr_ne(hash_table_create(32, hash), NULL);
-}END_TEST
+START_TEST(test_hash_table_create_valid)
+{
+	ck_assert_ptr_ne(hash_table_create(32, hash), NULL);
+}
 
-START_TEST (test_hash_table_create_invalid) {
-        ck_assert_ptr_eq(hash_table_create(0, hash), 0);
-        ck_assert_ptr_eq(hash_table_create(32, NULL), 0);
-}END_TEST
+END_TEST START_TEST(test_hash_table_create_invalid)
+{
+	ck_assert_ptr_eq(hash_table_create(0, hash), 0);
+	ck_assert_ptr_eq(hash_table_create(32, NULL), 0);
+}
 
-static TFun hashtable_tests[] = {
-        test_hash_table_create_valid,
-        test_hash_table_create_invalid,
-        NULL
+END_TEST static TFun hashtable_tests[] = {
+	test_hash_table_create_valid,
+	test_hash_table_create_invalid,
+	NULL
 };
 
-Suite *test_hashtable(void) {
-        Suite *s = suite_create("test_hashtable");
-        TFun *curr = NULL;
-        TCase *tc_core = tcase_create("hashtable");
+Suite *test_hashtable(void)
+{
+	Suite *s = suite_create("test_hashtable");
+	TFun *curr = NULL;
+	TCase *tc_core = tcase_create("hashtable");
 
-        curr = hashtable_tests;
-        while (*curr) {
-                tcase_add_test(tc_core, *curr++);
-        }
+	curr = hashtable_tests;
+	while (*curr) {
+		tcase_add_test(tc_core, *curr++);
+	}
 
-        suite_add_tcase(s, tc_core);
-        return s;
+	suite_add_tcase(s, tc_core);
+	return s;
 }
