@@ -142,7 +142,8 @@ int main(int argc, char **argv)
 		goto FILE_EXIT;
 	}
 
-	hash_t *player_table = hash_table_create((num_entries + (num_entries / 2)), hash);
+	hash_t *player_table =
+	    hash_table_create((num_entries + (num_entries / 2)), hash);
 	hash_t *team_table = hash_table_create(2000, hash);
 	for (uint16_t entry = 0; entry < num_entries; ++entry) {
 		char *curr_entry = NULL;

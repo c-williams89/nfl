@@ -54,7 +54,7 @@ int llist_enqueue(llist_t * llist, void *data)
 
 	exit_status = 1;
 
-EXIT:
+ EXIT:
 	return exit_status;
 }
 
@@ -76,7 +76,7 @@ void *llist_dequeue(llist_t * list)
 
 	--list->size;
 
-EXIT:
+ EXIT:
 	return data;
 }
 
@@ -87,20 +87,6 @@ bool llist_is_empty(llist_t * llist)
 	}
 	return llist->size > 0 ? false : true;
 }
-
-// void *llist_peek(llist_t * list, int idx)
-// {
-// 	node_t *node = NULL;
-// 	if (!list) {
-// 		return 0;
-// 	}
-
-// 	node_t *node = list->head;
-// 	while (idx--) {
-// 		node = node->next;
-// 	}
-// 	return node->data;
-// }
 
 void llist_destroy(llist_t * llist)
 {
@@ -120,11 +106,6 @@ void llist_destroy(llist_t * llist)
 	free(llist);
 }
 
-// int llist_get_size(llist_t * llist)
-// {
-// 	return (!llist) ? 0 : llist->size;
-// }
-
 int llist_create_iter(llist_t * llist, llist_iter_t * iter)
 {
 	int exit_status = 0;
@@ -133,7 +114,8 @@ int llist_create_iter(llist_t * llist, llist_iter_t * iter)
 	}
 	*iter = llist->head;
 	exit_status = 1;
-EXIT:
+
+ EXIT:
 	return exit_status;
 }
 
@@ -142,7 +124,7 @@ void *llist_iter_next(llist_iter_t * iter)
 	if (!iter) {
 		return NULL;
 	}
-	
+
 	llist_iter_t tmp = *iter;
 	*iter = tmp->next;
 	return tmp->data;
