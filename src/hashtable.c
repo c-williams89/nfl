@@ -94,6 +94,9 @@ int hash_table_insert(hash_t * ht, char *key, void *data)
 	}
 
 	entry_t *entry = create_entry(data, key);
+	if (!entry) {
+		goto EXIT;
+	}
 
 	uint64_t index = (ht->hash_function(key) % ht->max_cap);
 	for (uint32_t i = 0; i < ht->max_cap; ++i) {
