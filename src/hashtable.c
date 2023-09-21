@@ -192,7 +192,8 @@ EXIT:
 
 void hashtable_destroy(l_opts * my_opts)
 {
-	if (!my_opts || !my_opts->team_table || !!my_opts->player_table) {
+	if (!my_opts || !my_opts->team_table || !my_opts->player_table) {
+		printf("One of these options is null?\n");
 		return;
 	}
 

@@ -11,10 +11,12 @@ typedef struct l_opts {
 	char *search_param2;
 	hash_t *player_table;
 	hash_t *team_table;
+	llist_t *params;
 } l_opts;
 
 void print_helper(l_opts * my_opts)
 {
+	int exit_status = 0;
 	size_t len = 0;
 	switch (my_opts->option) {
 	case 'p':
@@ -49,4 +51,6 @@ void print_helper(l_opts * my_opts)
 	default:
 		break;
 	}
+
+	// return exit_status;
 }
