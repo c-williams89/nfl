@@ -36,6 +36,7 @@ enum { NUM_COHORTS = 10 };
 static void bfs(player_t * player);
 static bool calc_distance(player_t * start, player_t * end);
 static void print_distance(player_t * start);
+static char* check_if_id(char *name);
 
 static team_t *team_create(char *year, char *name, player_t * player)
 {
@@ -118,7 +119,7 @@ EXIT:
 	return exit_status;
 }
 
-int compare_player(player_t * player, char *val)
+static int compare_player(player_t * player, char *val)
 {
 	int exit_status = 0;
 	if (!player || !val) {
@@ -156,14 +157,11 @@ void print_player(char *player_arg, hash_t * player_table)
 	}
 
 	player_t *player;
-
-	if (strpbrk(player_arg, "0123456789")) {
+	if (check_if_id(player_arg)) {
 		char *key = player_arg;
 		player = (player_t *) find(player_table, key);
 	} else {
-		player =
-		    (player_t *) find_no_key(player_table, player_arg,
-					     (comp_f) compare_player);
+		player = (player_t *) find_no_key(player_table, player_arg, (comp_f) compare_player);
 	}
 
 	if (player) {
@@ -242,13 +240,20 @@ void player_stats(hash_t * player_table, char *name)
 		fprintf(stderr, "player_stats: invalid argument - NULL\n");
 		return;
 	}
-	// TODO: Incorporate search by name or id
-	player_t *player =
-	    find_no_key(player_table, name, (comp_f) compare_player);
+
+	player_t *player;
+	
+	if (check_if_id(name)) {
+		player = find(player_table, name);
+	} else {
+		player = find_no_key(player_table, name, (comp_f) compare_player);
+	}
+
 	if (!player) {
-		fprintf(stderr, "player_stats: player does not exist\n");
+		fprintf(stderr, "nfl: player does not exist\n");
 		return;
 	}
+
 	bfs(player);
 }
 
@@ -259,10 +264,25 @@ void player_distance(hash_t * player_table, char *start, char *end)
 		return;
 	}
 
-	player_t *player1 =
-	    find_no_key(player_table, start, (comp_f) compare_player);
-	player_t *player2 =
-	    find_no_key(player_table, end, (comp_f) compare_player);
+	player_t *player1;
+	player_t *player2;
+	if (check_if_id(start)) {
+		player1 = find(player_table, start);
+	} else {
+		player1 = find_no_key(player_table, start, (comp_f) compare_player);
+	}
+
+	if (check_if_id(end)) {
+		player2 = find(player_table, end);
+
+	} else {
+		player2 = find_no_key(player_table, end, (comp_f) compare_player);
+	}
+
+	if (!player1 || !player2) {
+		fprintf(stderr, "nfl: player does not exist\n");
+		return;
+	}
 	
 	if (calc_distance(player1, player2)) {
 		print_distance(player2);
@@ -287,7 +307,7 @@ void team_destroy(team_t * team)
 	llist_destroy(team->roster);
 }
 
-void reset(player_t * player)
+static void reset(player_t * player)
 {
 	if (!player) {
 		return;
@@ -296,7 +316,7 @@ void reset(player_t * player)
 	player->level = 0;
 }
 
-void reset_team(team_t * team)
+static void reset_team(team_t * team)
 {
 	if (!team) {
 		return;
@@ -424,10 +444,10 @@ static void oracle_search(player_t * player, struct oracle_t *or_results)
 		llist_create_iter(curr->teams, &teams);
 		while ((!llist_iter_is_empty(teams))) {
 			team_t *team = (team_t *) llist_iter_next(&teams);
-
 			if (team->level) {
 				continue;
 			}
+
 			team->level = 1;
 			llist_iter_t players = { 0 };
 			llist_create_iter(team->roster, &players);
@@ -476,8 +496,10 @@ void player_oracle(hash_t * player_table, hash_t * team_table)
 	}
 	
 	struct oracle_t or_results = { 0 };
+
 	or_results.worst_sep = 0.0;
 	or_results.best_sep = FLT_MAX;
+
 	llist_t *players = get_player(player_table);
 	player_t *player;
 	int count = 0;
@@ -500,4 +522,9 @@ void player_oracle(hash_t * player_table, hash_t * team_table)
 	    ("The least connected NFL player with at least 100 connections of the NFL ");
 	printf("universe (since 1960) with a score of %.6f is %s\n",
 	       or_results.worst_sep, or_results.worst->name);
+}
+
+static char* check_if_id(char *name) {
+	return strpbrk(name, "0123456789");
+
 }
