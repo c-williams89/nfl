@@ -18,7 +18,6 @@ typedef struct player_t {
 	char *birthday;
 	char *college;
 	llist_t *teams;
-	int num_teams;
 	int level;
 	void *parent;
 } player_t;
@@ -99,7 +98,6 @@ player_t *player_create(hash_t * team_table, char *current)
 			hash_table_insert(team_table, key, tmp);
 			llist_enqueue(player->teams, tmp);
 		}
-		player->num_teams += 1;
 		curr_team = strsep(&current, "\t");
 	}
  EXIT:
