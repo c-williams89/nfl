@@ -4,6 +4,7 @@
 #include <string.h>
 #include "../include/player.h"
 #include "../include/hashtable.h"
+#include "../include/llist.h"
 
 typedef struct l_opts {
 	char option;
@@ -11,7 +12,7 @@ typedef struct l_opts {
 	char *search_param2;
 	hash_t *player_table;
 	hash_t *team_table;
-	llist_t *params;
+	llist_t *ignored;
 } l_opts;
 
 void print_helper(l_opts * my_opts)
@@ -43,7 +44,8 @@ void print_helper(l_opts * my_opts)
 		break;
 	case 'd':
 		player_distance(my_opts->player_table, my_opts->search_param1,
-				my_opts->search_param2);
+				my_opts->search_param2, my_opts->ignored);
+		free(my_opts->ignored);
 		break;
 	case 'o':
 		player_oracle(my_opts->player_table, my_opts->team_table);

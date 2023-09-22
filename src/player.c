@@ -259,7 +259,7 @@ void player_stats(hash_t * player_table, char *name)
 	bfs(player);
 }
 
-void player_distance(hash_t * player_table, char *start, char *end)
+void player_distance(hash_t * player_table, char *start, char *end, llist_t *ignored)
 {
 	if (!player_table || !start || !end) {
 		fprintf(stderr, "player_distance: invalid argument - NULL\n");
@@ -286,6 +286,23 @@ void player_distance(hash_t * player_table, char *start, char *end)
 	if (!player1 || !player2) {
 		fprintf(stderr, "nfl: player does not exist\n");
 		return;
+	}
+
+	if (ignored) {
+		player_t *ignore_player;
+		while (!llist_is_empty(ignored)) {
+			char *to_ignore = llist_dequeue(ignored);
+			if (check_if_id(to_ignore)) {
+				ignore_player = find(player_table, to_ignore);
+			} else {
+				ignore_player = find_no_key(player_table, to_ignore, (comp_f) compare_player);
+			}
+			if (!ignore_player || (ignore_player == player1) || (ignore_player == player2)) {
+				return;
+			}
+
+			ignore_player->parent = ignore_player;
+		}
 	}
 
 	if (calc_distance(player1, player2)) {
@@ -405,6 +422,7 @@ static bool calc_distance(player_t * start, player_t * end)
 		}
 	}
  EXIT:
+	llist_destroy(queue);
 	return b_route_found;
 }
 

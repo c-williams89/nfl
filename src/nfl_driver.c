@@ -25,8 +25,6 @@ uint64_t hash(char *key)
 
 int main(int argc, char **argv)
 {
-	//TODO: Incorporate ignore flag. Needs to check against null, as well as
-	//  check that the ignored players are neither start or end.
 	int c;
 	l_opts *my_opts = calloc(1, sizeof(l_opts));
 
@@ -44,9 +42,10 @@ int main(int argc, char **argv)
 			{"distance", required_argument, NULL, 'd'},
 			{"oracle", no_argument, NULL, 'o'},
 			{"help", no_argument, NULL, 'h'},
+			{"ignore", required_argument, NULL, 'i'},
 			{0, 0, 0, 0}
 		};
-		c = getopt_long(argc, argv, "-:f:i", long_options,
+		c = getopt_long(argc, argv, "-:f:i:", long_options,
 				&option_index);
 		if (-1 == c) {
 			break;
@@ -123,10 +122,17 @@ int main(int argc, char **argv)
 			}
 			fclose(help);
 			goto FILE_EXIT;
+		case 'i':
+			if (!my_opts->ignored) {
+				my_opts->ignored = llist_create();
+			}
+			llist_enqueue(my_opts->ignored, optarg);
+			break;
 		case '?':
 			printf("Unknown option");
 			goto FILE_EXIT;
 		case ':':
+			printf("nfl: missing required argument\n");
 			goto FILE_EXIT;
 		default:
 			break;
