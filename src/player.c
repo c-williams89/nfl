@@ -297,7 +297,9 @@ void player_distance(hash_t * player_table, char *start, char *end, llist_t *ign
 			} else {
 				ignore_player = find_no_key(player_table, to_ignore, (comp_f) compare_player);
 			}
+
 			if (!ignore_player || (ignore_player == player1) || (ignore_player == player2)) {
+				llist_destroy(ignored);
 				return;
 			}
 

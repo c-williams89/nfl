@@ -27,6 +27,9 @@ int main(int argc, char **argv)
 {
 	int c;
 	l_opts *my_opts = calloc(1, sizeof(l_opts));
+	// if (argc < 2) {
+	// 	my_opts->option = 'h';
+	// }
 
 	FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
 	FILE *help = NULL;
@@ -45,7 +48,7 @@ int main(int argc, char **argv)
 			{"ignore", required_argument, NULL, 'i'},
 			{0, 0, 0, 0}
 		};
-		c = getopt_long(argc, argv, "-:f:i:", long_options,
+		c = getopt_long(argc, argv, "f:i:", long_options,
 				&option_index);
 		if (-1 == c) {
 			break;
@@ -113,7 +116,6 @@ int main(int argc, char **argv)
 		case 'h':
 			help = fopen("./doc/help.txt", "r");
 			if (!help) {
-				printf("oh no");
 				break;
 			}
 			char line[255];
@@ -129,14 +131,18 @@ int main(int argc, char **argv)
 			llist_enqueue(my_opts->ignored, optarg);
 			break;
 		case '?':
-			printf("Unknown option");
 			goto FILE_EXIT;
 		case ':':
-			printf("nfl: missing required argument\n");
+			// printf("nfl: '%s' missing required argument\n", long_options[option_index].name);
 			goto FILE_EXIT;
 		default:
 			break;
 		}
+	}
+	if (my_opts->ignored && (my_opts->option != 'd')) {
+		fprintf(stderr, "--ignore: missing --distance option\n");
+		llist_destroy(my_opts->ignored);
+		goto OPTION_EXIT;
 	}
 
 	if (!validate_file(fp)) {
@@ -168,5 +174,6 @@ int main(int argc, char **argv)
 	fclose(fp);
  OPTION_EXIT:
 	free(my_opts);
+ARG_EXIT:
 	return 1;
 }
