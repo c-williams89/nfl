@@ -1,7 +1,8 @@
 # Ignore Rubric
 /doc/nfl.pdf
 /doc/*.tex
-
+/doc/*.png
+/doc/*.drawio
 .vscode/
 metrics.txt
 gmon.out
