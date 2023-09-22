@@ -10,12 +10,12 @@ int main(void)
 	SRunner *sr = srunner_create(NULL);
 
 	// Suite *test_io_helper_suite = test_io_helper();
-	// Suite *test_hashtable_suite = test_hashtable();
+	Suite *test_hashtable_suite = test_hashtable();
 	// Suite *test_player_suite = test_player();
 	Suite *test_llist_suite = test_llist();
 
 	// srunner_add_suite(sr, test_io_helper_suite);
-	// srunner_add_suite(sr, test_hashtable_suite);
+	srunner_add_suite(sr, test_hashtable_suite);
 	// srunner_add_suite(sr, test_player_suite);
 	srunner_add_suite(sr, test_llist_suite);
 
