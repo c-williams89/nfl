@@ -41,7 +41,7 @@ int trie_insert(trie_t ** trie, const char *target)
 {
 	int exit_status = 0;
 	if (!trie || !target) {
-		fprintf(stderr, "trie_insert: Invalid argument");
+		fprintf(stderr, "trie_insert: Invalid argument\n");
 		goto EXIT;
 	}
 	if (!*trie) {
