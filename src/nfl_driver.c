@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 	     goto ARG_EXIT;
 	}
 	int c;
-	int exit_status = 1;
+	int exit_status = 0;
 	l_opts *my_opts = calloc(1, sizeof(l_opts));
 
 	FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
@@ -174,7 +174,9 @@ int main(int argc, char **argv)
 	}
 	my_opts->team_table = team_table;
 	my_opts->player_table = player_table;
-	print_helper(my_opts);
+	if (!print_helper(my_opts)) {
+		exit_status = 1;
+	}
 	hashtable_destroy(my_opts);
 
  FILE_EXIT:
@@ -182,5 +184,5 @@ int main(int argc, char **argv)
  OPTION_EXIT:
 	free(my_opts);
  ARG_EXIT:
-	return 1;
+	return exit_status;
 }

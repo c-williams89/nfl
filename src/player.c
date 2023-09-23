@@ -147,11 +147,12 @@ int compare_fields(player_t * player, char *val)
 	return exit_status;
 }
 
-void print_player(char *player_arg, hash_t * player_table)
+int print_player(char *player_arg, hash_t * player_table)
 {
+	int exit_status = 0;
 	if (!player_arg || !player_table) {
 		fprintf(stderr, "print_player: invalid argument - NULL\n");
-		return;
+		goto EXIT;
 	}
 
 	player_t *player;
@@ -164,14 +165,20 @@ void print_player(char *player_arg, hash_t * player_table)
 					     (comp_f) compare_player);
 	}
 
-	if (player) {
-		printf("%s\t%s\t%s\t%s\n", player->id, player->name,
-		       player->position, player->college);
-		while (!llist_is_empty(player->teams)) {
-			team_t *team = (team_t *) llist_dequeue(player->teams);
-			printf("\t%s - %s\n", team->year, team->team_name);
-		}
+	if(!player) {
+		fprintf(stderr, "nfl: player not found\n");
+		goto EXIT;
 	}
+
+	exit_status = 1;
+	printf("%s\t%s\t%s\t%s\n", player->id, player->name,
+		player->position, player->college);
+	while (!llist_is_empty(player->teams)) {
+		team_t *team = (team_t *) llist_dequeue(player->teams);
+		printf("\t%s - %s\n", team->year, team->team_name);
+	}
+EXIT:
+	return exit_status;
 }
 
 void print_search_results(char *search_param, hash_t * player_table)

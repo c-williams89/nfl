@@ -15,13 +15,13 @@ typedef struct l_opts {
 	llist_t *ignored;
 } l_opts;
 
-void print_helper(l_opts * my_opts)
+int print_helper(l_opts * my_opts)
 {
 	int exit_status = 0;
 	size_t len = 0;
 	switch (my_opts->option) {
 	case 'p':
-		print_player(my_opts->search_param1, my_opts->player_table);
+		exit_status = print_player(my_opts->search_param1, my_opts->player_table);
 		break;
 	case 's':
 		print_search_results(my_opts->search_param1,
@@ -54,5 +54,5 @@ void print_helper(l_opts * my_opts)
 		break;
 	}
 
-	// return exit_status;
+	return exit_status;
 }
