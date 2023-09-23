@@ -53,6 +53,10 @@ int main(int argc, char **argv)
 		c = getopt_long(argc, argv, "f:i:", long_options,
 				&option_index);
 		if (-1 == c) {
+			if (argv[optind]) {
+				fprintf(stderr, "nfl: too many args\n");
+				goto FILE_EXIT;
+			}
 			break;
 		}
 

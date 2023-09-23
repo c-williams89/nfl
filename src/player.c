@@ -393,6 +393,7 @@ static void bfs(player_t * player)
 		       (i == 0) ? "\n" : "s\n");
 	}
 	avg_sep = avg_sep / total_connected;
+	free(cohort_queue);
 	printf("Average separation %.6f\n", avg_sep);
 }
 
