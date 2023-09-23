@@ -212,7 +212,7 @@ EXIT:
 void print_teams(hash_t * team_table)
 {
 	if (!team_table) {
-		fprintf(stderr, "print_teams: invalid argument - NULL\n");
+		fprintf(stderr, "nfl: invalid argument - NULL\n");
 		return;
 	}
 

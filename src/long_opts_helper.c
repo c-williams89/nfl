@@ -18,6 +18,9 @@ typedef struct l_opts {
 int print_helper(l_opts * my_opts)
 {
 	int exit_status = 0;
+	if (!my_opts) {
+		goto EXIT;
+	}
 	size_t len = 0;
 	switch (my_opts->option) {
 	case 'p':
@@ -54,5 +57,6 @@ int print_helper(l_opts * my_opts)
 		break;
 	}
 
+EXIT:
 	return exit_status;
 }

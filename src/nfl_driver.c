@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 	     goto ARG_EXIT;
 	}
 	int c;
-	int exit_status = 0;
+	int exit_status = 1;
 	l_opts *my_opts = calloc(1, sizeof(l_opts));
 
 	FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
@@ -163,26 +163,51 @@ int main(int argc, char **argv)
 
 	hash_t *player_table =
 	    hash_table_create((num_entries + (num_entries / 2)), hash);
+	if (!player_table) {
+		goto FILE_EXIT;
+	}
+
 	hash_t *team_table = hash_table_create(2000, hash);
+	if (!team_table) {
+		goto FILE_EXIT;
+	}
+	
 	for (uint16_t entry = 0; entry < num_entries; ++entry) {
 		char *curr_entry = NULL;
 		size_t len = 0;
 		getline(&curr_entry, &len, fp);
 		curr_entry[strcspn(curr_entry, "\n")] = '\0';
-		player_t *player = player_create(team_table, curr_entry);
-		player_insert(player, player_table);
+		player_t *player;
+		player = player_create(team_table, curr_entry);
+		if (!player) {
+			fprintf(stderr, "Invalid data format\n");
+			goto HT_EXIT;
+		}
+		
+		if (!player_insert(player, player_table)) {
+			fprintf(stderr, "nfl: unable to insert player\n");
+			goto HT_EXIT; 
+		}
 	}
+
+	if (!hashtable_get_size(team_table) || !hashtable_get_size(player_table)) {
+		fprintf(stderr, "nfl: table is empty\n");
+		goto HT_EXIT;
+	}
+
 	my_opts->team_table = team_table;
 	my_opts->player_table = player_table;
-	if (!print_helper(my_opts)) {
-		exit_status = 1;
+	
+	if (print_helper(my_opts)) {
+		exit_status = 0;
 	}
-	hashtable_destroy(my_opts);
 
- FILE_EXIT:
+HT_EXIT:
+	hashtable_destroy(my_opts);
+FILE_EXIT:
 	fclose(fp);
- OPTION_EXIT:
+OPTION_EXIT:
 	free(my_opts);
- ARG_EXIT:
+ARG_EXIT:
 	return exit_status;
 }
