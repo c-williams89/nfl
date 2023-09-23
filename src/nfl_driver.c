@@ -25,11 +25,13 @@ uint64_t hash(char *key)
 
 int main(int argc, char **argv)
 {
+	if (argc < 2) {
+	     fprintf(stderr, "nfl: missing option\nTry '.nfl --help' for more information\n");
+	     goto ARG_EXIT;
+	}
 	int c;
+	int exit_status = 1;
 	l_opts *my_opts = calloc(1, sizeof(l_opts));
-	// if (argc < 2) {
-	// 	my_opts->option = 'h';
-	// }
 
 	FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
 	FILE *help = NULL;
@@ -131,9 +133,13 @@ int main(int argc, char **argv)
 			llist_enqueue(my_opts->ignored, optarg);
 			break;
 		case '?':
+		// Case if required arg not found
+
+		// printf("invalid");
 			goto FILE_EXIT;
 		case ':':
-			// printf("nfl: '%s' missing required argument\n", long_options[option_index].name);
+		printf("invalid");
+
 			goto FILE_EXIT;
 		default:
 			break;
@@ -174,6 +180,6 @@ int main(int argc, char **argv)
 	fclose(fp);
  OPTION_EXIT:
 	free(my_opts);
-ARG_EXIT:
+ ARG_EXIT:
 	return 1;
 }

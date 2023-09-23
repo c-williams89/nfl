@@ -16,6 +16,7 @@ void data_destroy(hash_t * table);
 void player_destroy(player_t * player);
 void team_destroy(team_t * team);
 void player_stats(hash_t * player_table, char *name);
-void player_distance(hash_t * player_table, char *start, char *end, llist_t *ignored);
+void player_distance(hash_t * player_table, char *start, char *end,
+		     llist_t * ignored);
 void player_oracle(hash_t * player_table, hash_t * team_table);
 #endif
