@@ -137,9 +137,6 @@ int main(int argc, char **argv)
 			llist_enqueue(my_opts->ignored, optarg);
 			break;
 		case '?':
-		// Case if required arg not found
-
-		// printf("invalid");
 			goto FILE_EXIT;
 		case ':':
 		printf("invalid");
