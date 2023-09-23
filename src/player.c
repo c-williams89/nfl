@@ -259,7 +259,8 @@ void player_stats(hash_t * player_table, char *name)
 	bfs(player);
 }
 
-void player_distance(hash_t * player_table, char *start, char *end, llist_t *ignored)
+void player_distance(hash_t * player_table, char *start, char *end,
+		     llist_t * ignored)
 {
 	if (!player_table || !start || !end) {
 		fprintf(stderr, "player_distance: invalid argument - NULL\n");
@@ -295,9 +296,14 @@ void player_distance(hash_t * player_table, char *start, char *end, llist_t *ign
 			if (check_if_id(to_ignore)) {
 				ignore_player = find(player_table, to_ignore);
 			} else {
-				ignore_player = find_no_key(player_table, to_ignore, (comp_f) compare_player);
+				ignore_player =
+				    find_no_key(player_table, to_ignore,
+						(comp_f) compare_player);
 			}
-			if (!ignore_player || (ignore_player == player1) || (ignore_player == player2)) {
+
+			if (!ignore_player || (ignore_player == player1)
+			    || (ignore_player == player2)) {
+				llist_destroy(ignored);
 				return;
 			}
 
@@ -387,6 +393,7 @@ static void bfs(player_t * player)
 		       (i == 0) ? "\n" : "s\n");
 	}
 	avg_sep = avg_sep / total_connected;
+	free(cohort_queue);
 	printf("Average separation %.6f\n", avg_sep);
 }
 

@@ -25,7 +25,12 @@ uint64_t hash(char *key)
 
 int main(int argc, char **argv)
 {
+	if (argc < 2) {
+	     fprintf(stderr, "nfl: missing option\nTry '.nfl --help' for more information\n");
+	     goto ARG_EXIT;
+	}
 	int c;
+	int exit_status = 1;
 	l_opts *my_opts = calloc(1, sizeof(l_opts));
 
 	FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
@@ -45,9 +50,13 @@ int main(int argc, char **argv)
 			{"ignore", required_argument, NULL, 'i'},
 			{0, 0, 0, 0}
 		};
-		c = getopt_long(argc, argv, "-:f:i:", long_options,
+		c = getopt_long(argc, argv, "f:i:", long_options,
 				&option_index);
 		if (-1 == c) {
+			if (argv[optind]) {
+				fprintf(stderr, "nfl: too many args\n");
+				goto FILE_EXIT;
+			}
 			break;
 		}
 
@@ -113,7 +122,6 @@ int main(int argc, char **argv)
 		case 'h':
 			help = fopen("./doc/help.txt", "r");
 			if (!help) {
-				printf("oh no");
 				break;
 			}
 			char line[255];
@@ -129,14 +137,19 @@ int main(int argc, char **argv)
 			llist_enqueue(my_opts->ignored, optarg);
 			break;
 		case '?':
-			printf("Unknown option");
 			goto FILE_EXIT;
 		case ':':
-			printf("nfl: missing required argument\n");
+		printf("invalid");
+
 			goto FILE_EXIT;
 		default:
 			break;
 		}
+	}
+	if (my_opts->ignored && (my_opts->option != 'd')) {
+		fprintf(stderr, "--ignore: missing --distance option\n");
+		llist_destroy(my_opts->ignored);
+		goto OPTION_EXIT;
 	}
 
 	if (!validate_file(fp)) {
@@ -168,5 +181,6 @@ int main(int argc, char **argv)
 	fclose(fp);
  OPTION_EXIT:
 	free(my_opts);
+ ARG_EXIT:
 	return 1;
 }

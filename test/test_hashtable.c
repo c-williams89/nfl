@@ -26,9 +26,8 @@ END_TEST START_TEST(test_hash_table_create_invalid)
 	ck_assert_ptr_eq(hash_table_create(32, NULL), 0);
 }
 
-END_TEST 
-
-START_TEST(test_hash_table_insert) {
+END_TEST START_TEST(test_hash_table_insert)
+{
 	hash_t *test_table = hash_table_create(32, hash);
 	char key[] = "hashtable_insert_test";
 	int x = 42;
@@ -37,9 +36,8 @@ START_TEST(test_hash_table_insert) {
 	ck_assert_int_eq(hash_table_insert(NULL, key, NULL), 0);
 	ck_assert_int_eq(hash_table_insert(test_table, NULL, data), 0);
 	ck_assert_int_eq(hash_table_insert(test_table, key, data), 1);
-}END_TEST
-
-START_TEST(test_find) {
+} END_TEST START_TEST(test_find)
+{
 	hash_t *test_table = hash_table_create(32, hash);
 	ck_assert_ptr_eq(find(NULL, NULL), NULL);
 	ck_assert_ptr_eq(find(test_table, NULL), NULL);
@@ -51,9 +49,8 @@ START_TEST(test_find) {
 	ck_assert_ptr_ne(find(test_table, key), NULL);
 	char invalid_key[] = "Invalid";
 	ck_assert_ptr_eq(find(test_table, invalid_key), NULL);
-}END_TEST
+} END_TEST static TFun hashtable_tests[] = {
 
-static TFun hashtable_tests[] = {
 	test_hash_table_create_valid,
 	test_hash_table_create_invalid,
 	test_hash_table_insert,
