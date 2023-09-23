@@ -147,11 +147,12 @@ int compare_fields(player_t * player, char *val)
 	return exit_status;
 }
 
-void print_player(char *player_arg, hash_t * player_table)
+int print_player(char *player_arg, hash_t * player_table)
 {
+	int exit_status = 0;
 	if (!player_arg || !player_table) {
 		fprintf(stderr, "print_player: invalid argument - NULL\n");
-		return;
+		goto EXIT;
 	}
 
 	player_t *player;
@@ -164,29 +165,37 @@ void print_player(char *player_arg, hash_t * player_table)
 					     (comp_f) compare_player);
 	}
 
-	if (player) {
-		printf("%s\t%s\t%s\t%s\n", player->id, player->name,
-		       player->position, player->college);
-		while (!llist_is_empty(player->teams)) {
-			team_t *team = (team_t *) llist_dequeue(player->teams);
-			printf("\t%s - %s\n", team->year, team->team_name);
-		}
+	if(!player) {
+		fprintf(stderr, "nfl: player not found\n");
+		goto EXIT;
 	}
+
+	exit_status = 1;
+	printf("%s\t%s\t%s\t%s\n", player->id, player->name,
+		player->position, player->college);
+	while (!llist_is_empty(player->teams)) {
+		team_t *team = (team_t *) llist_dequeue(player->teams);
+		printf("\t%s - %s\n", team->year, team->team_name);
+	}
+EXIT:
+	return exit_status;
 }
 
-void print_search_results(char *search_param, hash_t * player_table)
+int print_search_results(char *search_param, hash_t * player_table)
 {
+	int exit_status = 0;
 	if (!search_param || !player_table) {
 		fprintf(stderr,
-			"print_search_results: invalid argument - NULL\n");
-		return;
+			"nfl: invalid argument - NULL\n");
+		goto EXIT;
 	}
 
 	llist_t *search_results =
 	    find_matches(player_table, search_param, (comp_f) compare_fields);
-	if (!search_results) {
-		fprintf(stderr, "print_search_results: No matching params\n");
-		return;
+	if (llist_is_empty(search_results)) {
+		fprintf(stderr, "nfl: No matching params\n");
+		free(search_results);
+		goto EXIT;
 	}
 
 	while (!llist_is_empty(search_results)) {
@@ -194,12 +203,16 @@ void print_search_results(char *search_param, hash_t * player_table)
 		printf("%s\t%s\t%s\n", player->id, player->name,
 		       player->college);
 	}
+	free(search_results);
+	exit_status = 1;
+EXIT:
+	return exit_status;
 }
 
 void print_teams(hash_t * team_table)
 {
 	if (!team_table) {
-		fprintf(stderr, "print_teams: invalid argument - NULL\n");
+		fprintf(stderr, "nfl: invalid argument - NULL\n");
 		return;
 	}
 

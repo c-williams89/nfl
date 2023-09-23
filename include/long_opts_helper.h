@@ -10,5 +10,5 @@ typedef struct l_opts {
 	hash_t *team_table;
 	llist_t *ignored;
 } l_opts;
-void print_helper(l_opts * my_opts);
+int print_helper(l_opts * my_opts);
 #endif

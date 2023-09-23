@@ -21,4 +21,5 @@ void hashtable_destroy(l_opts * my_opts);
 llist_t *get_player(hash_t * player_table);
 void reset_players(hash_t * player_table, del_f reset);
 void reset_teams(hash_t * team_table, del_f reset);
+uint32_t hashtable_get_size(hash_t *table);
 #endif
