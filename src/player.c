@@ -181,19 +181,21 @@ EXIT:
 	return exit_status;
 }
 
-void print_search_results(char *search_param, hash_t * player_table)
+int print_search_results(char *search_param, hash_t * player_table)
 {
+	int exit_status = 0;
 	if (!search_param || !player_table) {
 		fprintf(stderr,
-			"print_search_results: invalid argument - NULL\n");
-		return;
+			"nfl: invalid argument - NULL\n");
+		goto EXIT;
 	}
 
 	llist_t *search_results =
 	    find_matches(player_table, search_param, (comp_f) compare_fields);
-	if (!search_results) {
-		fprintf(stderr, "print_search_results: No matching params\n");
-		return;
+	if (llist_is_empty(search_results)) {
+		fprintf(stderr, "nfl: No matching params\n");
+		free(search_results);
+		goto EXIT;
 	}
 
 	while (!llist_is_empty(search_results)) {
@@ -201,6 +203,10 @@ void print_search_results(char *search_param, hash_t * player_table)
 		printf("%s\t%s\t%s\n", player->id, player->name,
 		       player->college);
 	}
+	free(search_results);
+	exit_status = 1;
+EXIT:
+	return exit_status;
 }
 
 void print_teams(hash_t * team_table)

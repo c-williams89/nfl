@@ -24,7 +24,7 @@ int print_helper(l_opts * my_opts)
 		exit_status = print_player(my_opts->search_param1, my_opts->player_table);
 		break;
 	case 's':
-		print_search_results(my_opts->search_param1,
+		exit_status = print_search_results(my_opts->search_param1,
 				     my_opts->player_table);
 		break;
 	case 't':
