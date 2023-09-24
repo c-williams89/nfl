@@ -24,11 +24,12 @@ int print_helper(l_opts * my_opts)
 	size_t len = 0;
 	switch (my_opts->option) {
 	case 'p':
-		exit_status = print_player(my_opts->search_param1, my_opts->player_table);
+		exit_status =
+		    print_player(my_opts->search_param1, my_opts->player_table);
 		break;
 	case 's':
 		exit_status = print_search_results(my_opts->search_param1,
-				     my_opts->player_table);
+						   my_opts->player_table);
 		break;
 	case 't':
 		print_teams(my_opts->team_table);
@@ -57,6 +58,6 @@ int print_helper(l_opts * my_opts)
 		break;
 	}
 
-EXIT:
+ EXIT:
 	return exit_status;
 }

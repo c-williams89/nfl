@@ -26,8 +26,9 @@ uint64_t hash(char *key)
 int main(int argc, char **argv)
 {
 	if (argc < 2) {
-	     fprintf(stderr, "nfl: missing option\nTry '.nfl --help' for more information\n");
-	     goto ARG_EXIT;
+		fprintf(stderr,
+			"nfl: missing option\nTry '.nfl --help' for more information\n");
+		goto ARG_EXIT;
 	}
 	int c;
 	int exit_status = 1;
@@ -139,7 +140,7 @@ int main(int argc, char **argv)
 		case '?':
 			goto FILE_EXIT;
 		case ':':
-		printf("invalid");
+			printf("invalid");
 
 			goto FILE_EXIT;
 		default:
@@ -171,7 +172,7 @@ int main(int argc, char **argv)
 	if (!team_table) {
 		goto FILE_EXIT;
 	}
-	
+
 	for (uint16_t entry = 0; entry < num_entries; ++entry) {
 		char *curr_entry = NULL;
 		size_t len = 0;
@@ -183,31 +184,32 @@ int main(int argc, char **argv)
 			fprintf(stderr, "Invalid data format\n");
 			goto HT_EXIT;
 		}
-		
+
 		if (!player_insert(player, player_table)) {
 			fprintf(stderr, "nfl: unable to insert player\n");
-			goto HT_EXIT; 
+			goto HT_EXIT;
 		}
 	}
 
-	if (!hashtable_get_size(team_table) || !hashtable_get_size(player_table)) {
+	if (!hashtable_get_size(team_table)
+	    || !hashtable_get_size(player_table)) {
 		fprintf(stderr, "nfl: table is empty\n");
 		goto HT_EXIT;
 	}
 
 	my_opts->team_table = team_table;
 	my_opts->player_table = player_table;
-	
+
 	if (print_helper(my_opts)) {
 		exit_status = 0;
 	}
 
-HT_EXIT:
+ HT_EXIT:
 	hashtable_destroy(my_opts);
-FILE_EXIT:
+ FILE_EXIT:
 	fclose(fp);
-OPTION_EXIT:
+ OPTION_EXIT:
 	free(my_opts);
-ARG_EXIT:
+ ARG_EXIT:
 	return exit_status;
 }
