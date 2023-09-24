@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-// Opaque data type for users to use wiht API
+// Opaque data type for users to use with API
 typedef struct llist_t llist_t;
 
 /**
@@ -27,7 +27,7 @@ llist_t *llist_create(void);
 void llist_destroy(llist_t * list);
 
 /**
- * @brief Puts heal allocated data at back of queue
+ * @brief Puts heap allocated data at back of queue
  * 
  * @param list Pointer to linked list to store the data.
  * @param data Pointer to data user wishes to store.
