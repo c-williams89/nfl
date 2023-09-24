@@ -275,7 +275,8 @@ void reset_teams(hash_t * team_table, del_f reset)
 	}
 }
 
-uint32_t hashtable_get_size(hash_t *table) {
+uint32_t hashtable_get_size(hash_t * table)
+{
 	if (!table) {
 		return 0;
 	}

@@ -11,7 +11,6 @@ typedef void (*del_f)(void *);
 // Opaque data type for users to use with API
 typedef struct hash_t hash_t;
 
-
 typedef struct l_opts l_opts;
 
 /**
@@ -111,5 +110,5 @@ void reset_teams(hash_t * team_table, del_f reset);
  * 
  * @return uint32_t number of entries, NULL on error. 
  */
-uint32_t hashtable_get_size(hash_t *table);
+uint32_t hashtable_get_size(hash_t * table);
 #endif
