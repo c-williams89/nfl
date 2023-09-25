@@ -25,6 +25,8 @@ uint64_t hash(char *key)
 
 int main(int argc, char **argv)
 {
+	//while read -r line; do eval $line; done < test/stress_test.txt 
+
 	if (argc < 2) {
 		fprintf(stderr,
 			"nfl: missing option\nTry '.nfl --help' for more information\n");
@@ -147,6 +149,7 @@ int main(int argc, char **argv)
 			break;
 		}
 	}
+	
 	if (my_opts->ignored && (my_opts->option != 'd')) {
 		fprintf(stderr, "--ignore: missing --distance option\n");
 		llist_destroy(my_opts->ignored);

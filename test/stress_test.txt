@@ -1,0 +1,7 @@
+echo -e "test_invalid_files":
+valgrind ./nfl -f /dev/null
+valgrind ./nfl -f /dev/urandom
+valgrind ./nfl -f /dev/zero
+valgrind ./nfl -f ./test/test_data/0_file
+echo -e test_player_valid:
+valgrind ./nfl --player Andy\ Dalton 

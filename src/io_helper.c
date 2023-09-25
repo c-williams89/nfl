@@ -10,10 +10,6 @@ enum { MAX_LINE = 512 };
 int validate_file(FILE * fp)
 {
 	int exit_status = 0;
-	// if (!fp) {
-	//         fprintf(stderr, "validate_file: Invalid file pointer - NULL\n");
-	//         goto EXIT;
-	// }
 
 	struct stat path_stat;
 	int fd = fileno(fp);
