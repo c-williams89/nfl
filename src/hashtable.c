@@ -300,7 +300,7 @@ static void hash_table_resize(hash_t * table)
 	memset(tmp + table->max_cap, 0, (table->max_cap * PTR_SIZE));
 	table->entries = tmp;
 	table->max_cap *= 2;
-	for (int i = 0; i < (table->max_cap / 2); ++i) {
+	for (uint32_t i = 0; i < (table->max_cap / 2); ++i) {
 		if (table->entries[i]) {
 			reinsert(table, table->entries[i]);
 			table->entries[i] = NULL;
@@ -312,7 +312,7 @@ static void hash_table_resize(hash_t * table)
 static bool reinsert(hash_t * table, entry_t * entry)
 {
 	uint32_t index = (table->hash_function(entry->data) % table->max_cap);
-	for (int i = 0; i < table->max_cap; ++i) {
+	for (uint32_t i = 0; i < table->max_cap; ++i) {
 		int try = (i + index) % table->max_cap;
 		if (!table->entries[try] || table->entries[try]->b_to_delete) {
 			table->entries[try] = entry;
