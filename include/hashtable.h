@@ -75,7 +75,11 @@ llist_t *find_matches(hash_t * table, char *val, comp_f compare);
  */
 llist_t *find_teams(hash_t * table);
 
-// TODO: re-write to only take hashtable to reduce need for l_opts in hashtable
+/**
+ * @brief free() both hashtables to os.
+ * 
+ * @param my_opts Pointer to l_opts struct containing player and team hashtables 
+ */
 void hashtable_destroy(l_opts * my_opts);
 
 /**

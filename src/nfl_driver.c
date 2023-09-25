@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 	FILE *fp = fopen("./test/test_data/nfldata.tsv", "r");
 	FILE *help = NULL;
 
-	while (1) {		//TODO: Figure out better way to write this
+	while (1) {
 		int option_index = 0;
 		struct option long_options[] = {
 			{"player", required_argument, NULL, 'p'},
@@ -62,6 +62,11 @@ int main(int argc, char **argv)
 		}
 
 		switch (c) {
+		/**
+		 * In the cases where optind is compared against argc and argv[optind],
+		 * this is done to determine if the next optarg is part of an
+		 * option that has two required arguments. 
+		 */
 		case 1:
 			break;
 		case 'p':
@@ -154,7 +159,7 @@ int main(int argc, char **argv)
 			break;
 		}
 	}
-	
+
 	if (my_opts->ignored && (my_opts->option != 'd')) {
 		fprintf(stderr, "--ignore: missing --distance option\n");
 		llist_destroy(my_opts->ignored);
@@ -170,13 +175,12 @@ int main(int argc, char **argv)
 		goto FILE_EXIT;
 	}
 
-	hash_t *player_table =
-	    hash_table_create((num_entries + (num_entries / 2)), hash);
+	hash_t *player_table = hash_table_create(num_entries, hash);
 	if (!player_table) {
 		goto FILE_EXIT;
 	}
 
-	hash_t *team_table = hash_table_create(2000, hash);
+	hash_t *team_table = hash_table_create(500, hash);
 	if (!team_table) {
 		goto FILE_EXIT;
 	}

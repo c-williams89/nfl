@@ -64,9 +64,6 @@ void print_teams(hash_t * team_table);
  */
 void print_roster(hash_t * team_table, char *key);
 
-
-// void destroy_players();
-// void data_destroy(hash_t * table);
 /**
  * @brief free() player specific data fields, without freeing the player struct.
  * 
