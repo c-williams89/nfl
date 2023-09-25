@@ -32,31 +32,13 @@ typedef struct team_t {
 
 enum { NUM_COHORTS = 10 };
 
+static team_t *team_create(char *year, char *name, player_t * player);
 static void bfs(player_t * player);
 static bool calc_distance(player_t * start, player_t * end);
 static void print_distance(player_t * start);
 static char *check_if_id(char *name);
-
-static team_t *team_create(char *year, char *name, player_t * player)
-{
-	team_t *team = NULL;
-	if (!year || !name || !player) {
-		goto EXIT;
-	}
-
-	team = calloc(1, sizeof(*team));
-	if (!team) {
-		goto EXIT;
-	}
-
-	team->year = year;
-	team->team_name = name;
-	team->roster = llist_create();
-	llist_enqueue(team->roster, player);
-
- EXIT:
-	return team;
-}
+static int compare_player(player_t * player, char *val);
+static int compare_fields(player_t * player, char *val);
 
 player_t *player_create(hash_t * team_table, char *current)
 {
@@ -112,36 +94,6 @@ int player_insert(player_t * player, hash_t * ht)
 	}
 	char *key = player->id;
 	exit_status = hash_table_insert(ht, key, player);
-
- EXIT:
-	return exit_status;
-}
-
-static int compare_player(player_t * player, char *val)
-{
-	int exit_status = 0;
-	if (!player || !val) {
-		goto EXIT;
-	}
-
-	if (0 == strncmp(player->name, val, strlen(player->name))) {
-		exit_status = 1;
-	}
-
- EXIT:
-	return exit_status;
-}
-
-int compare_fields(player_t * player, char *val)
-{
-	int exit_status = 0;
-	if (!player || !val) {
-		goto EXIT;
-	}
-
-	if (strstr(player->name, val) || strstr(player->college, val)) {
-		exit_status = 1;
-	}
 
  EXIT:
 	return exit_status;
@@ -348,6 +300,35 @@ void team_destroy(team_t * team)
 	llist_destroy(team->roster);
 }
 
+/**
+ * Creates a team from the current player, creates roster linked list, and adds
+ * the current player to that roster. Returns pointer to the team. 
+ */
+static team_t *team_create(char *year, char *name, player_t * player)
+{
+	team_t *team = NULL;
+	if (!year || !name || !player) {
+		goto EXIT;
+	}
+
+	team = calloc(1, sizeof(*team));
+	if (!team) {
+		goto EXIT;
+	}
+
+	team->year = year;
+	team->team_name = name;
+	team->roster = llist_create();
+	llist_enqueue(team->roster, player);
+
+ EXIT:
+	return team;
+}
+
+/**
+ * After conducting the BFS in support of --oracle, resets the players level
+ * to 0 to be able to be discovered on the next iteration. 
+ */
 static void reset(player_t * player)
 {
 	if (!player) {
@@ -357,6 +338,10 @@ static void reset(player_t * player)
 	player->level = 0;
 }
 
+/**
+ * After conducting the BFS in support of --oracle, resets the team level to
+ * 0 to be able to be discovered on the next iteration. 
+ */
 static void reset_team(team_t * team)
 {
 	if (!team) {
@@ -365,6 +350,7 @@ static void reset_team(team_t * team)
 	team->level = 0;
 }
 
+// Conduct BFS with no early exit.
 static void bfs(player_t * player)
 {
 	if (!player) {
@@ -411,6 +397,7 @@ static void bfs(player_t * player)
 	printf("Average separation %.6f\n", avg_sep);
 }
 
+// Conduct BFS with early exit on end.
 static bool calc_distance(player_t * start, player_t * end)
 {
 	bool b_route_found = false;
@@ -567,8 +554,41 @@ void player_oracle(hash_t * player_table, hash_t * team_table)
 	       or_results.worst_sep, or_results.worst->name);
 }
 
+// Determines whether player arg is name or id.
 static char *check_if_id(char *name)
 {
 	return strpbrk(name, "0123456789");
 
+}
+
+// Custom compare function to find player by name.
+static int compare_player(player_t * player, char *val)
+{
+	int exit_status = 0;
+	if (!player || !val) {
+		goto EXIT;
+	}
+
+	if (0 == strncmp(player->name, val, strlen(player->name))) {
+		exit_status = 1;
+	}
+
+ EXIT:
+	return exit_status;
+}
+
+// Custom compare function to use with --search flag.
+static int compare_fields(player_t * player, char *val)
+{
+	int exit_status = 0;
+	if (!player || !val) {
+		goto EXIT;
+	}
+
+	if (strstr(player->name, val) || strstr(player->college, val)) {
+		exit_status = 1;
+	}
+
+ EXIT:
+	return exit_status;
 }
