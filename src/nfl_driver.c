@@ -25,8 +25,6 @@ uint64_t hash(char *key)
 
 int main(int argc, char **argv)
 {
-	//while read -r line; do eval $line; done < test/stress_test.txt 
-
 	if (argc < 2) {
 		fprintf(stderr,
 			"nfl: missing option\nTry '.nfl --help' for more information\n");
@@ -68,36 +66,41 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			if (my_opts->option) {
-				goto OPTION_EXIT;
+				goto FILE_EXIT;
 			}
 			my_opts->option = 'p';
 			my_opts->search_param1 = optarg;
 			break;
 		case 's':
 			if (my_opts->option) {
-				goto OPTION_EXIT;
+				goto FILE_EXIT;
 			}
 			my_opts->option = 's';
 			my_opts->search_param1 = optarg;
 			break;
 		case 'S':
+			if (my_opts->option) {
+				goto FILE_EXIT;
+			}
 			my_opts->option = 'S';
 			my_opts->search_param1 = optarg;
 			break;
 		case 'r':
 			if (my_opts->option) {
-				goto OPTION_EXIT;
+				goto FILE_EXIT;
 			}
 			my_opts->option = 'r';
 			my_opts->search_param1 = optarg;
 			if ((optind < argc) && (*argv[optind] != '-')) {
 				my_opts->search_param2 = argv[optind];
+			} else {
+				goto FILE_EXIT;
 			}
 			++optind;
 			break;
 		case 't':
 			if (my_opts->option) {
-				goto OPTION_EXIT;
+				goto FILE_EXIT;
 			}
 			my_opts->option = 't';
 			break;
@@ -106,6 +109,8 @@ int main(int argc, char **argv)
 			my_opts->search_param1 = optarg;
 			if ((optind < argc) && (*argv[optind] != '-')) {
 				my_opts->search_param2 = argv[optind];
+			} else {
+				goto FILE_EXIT;
 			}
 			++optind;
 			break;
@@ -118,7 +123,7 @@ int main(int argc, char **argv)
 			break;
 		case 'o':
 			if (my_opts->option) {
-				goto OPTION_EXIT;
+				goto FILE_EXIT;
 			}
 			my_opts->option = 'o';
 			break;
