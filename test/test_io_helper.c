@@ -20,7 +20,7 @@ START_TEST(test_validate_file_invalid)
 	}
 } END_TEST START_TEST(test_validate_file_valid)
 {
-	FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
+	FILE *fp = fopen("./test/test_data/nfldata.tsv", "r");
 	ck_assert_int_eq(validate_file(fp), 1);
 } END_TEST START_TEST(test_get_num_entries_valid)
 {
@@ -28,7 +28,7 @@ START_TEST(test_validate_file_invalid)
 	ck_assert_int_eq(get_num_entries(fp), 4);
 	fp = fopen("./test/test_data/data_0_entries.txt", "r");
 	ck_assert_int_eq(get_num_entries(fp), 0);
-	fp = fopen("./test/test_data/nfldata.txt", "r");
+	fp = fopen("./test/test_data/nfldata.tsv", "r");
 	ck_assert_int_eq(get_num_entries(fp), 20490);
 } END_TEST START_TEST(test_get_num_entries_invalid)
 {

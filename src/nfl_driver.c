@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 	int exit_status = 1;
 	l_opts *my_opts = calloc(1, sizeof(l_opts));
 
-	FILE *fp = fopen("./test/test_data/nfldata.txt", "r");
+	FILE *fp = fopen("./test/test_data/nfldata.tsv", "r");
 	FILE *help = NULL;
 
 	while (1) {		//TODO: Figure out better way to write this
