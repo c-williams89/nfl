@@ -199,8 +199,9 @@ int print_search_results(char *search_param, hash_t * player_table)
 
 	while (!llist_is_empty(search_results)) {
 		player_t *player = (player_t *) llist_dequeue(search_results);
-		printf("%s\t%s\t%s\n", player->id, player->name,
-		       player->college);
+		team_t *team = (team_t *)llist_dequeue(player->teams);
+		printf("%10s\t%-20s\t%-20s\t%-20s\n", player->id, player->name,
+		       player->college, team->team_name);
 	}
 	free(search_results);
 	exit_status = 1;
