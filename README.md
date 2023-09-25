@@ -1,92 +1,222 @@
 # nfl
 
-
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://git.cybbh.space/170D/wobc/student-folders/23_001/williams/nfl.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://git.cybbh.space/170D/wobc/student-folders/23_001/williams/nfl/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
 ## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+`nfl` is a program that loads a player/team database of NFL players from 1960
+through 2019 and calculates the degrees of separation between any two players,
+as well as provide statistics for any given player or team through the use of
+specified command line options.
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+The entire projet can be cloned from Git.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Developed with C18 and compiled with gcc-9.
+
+---
+
+### Build
+`nfl` can be built using the make tool.
+To build and compile the program:
+```sh
+<project_root>$ make
+```
+to create the executable `nfl`.
+
+---
+
+### Run
+`nfl` must be invoked with one and only one of the following required options:
+
+```sh 
+--player <PLAYER>
+--search <SEARCH_PARAM>
+--stats <PLAYER>
+--distance <PLAYER> <PLAYER> [-i]
+--teams
+--roster <TEAM_NAME> <TEAM_YEAR>
+--oracle
+```
+`nfl` can accept the following optional argument:
+```sh
+-f <FILE>
+```
+To specify a file other than the default player/team database included with the repo.
+
+#### Option Flags
+`--player <PLAYER>` - Accepts a player argument as either player name or ID, and
+prints their id, name, position, college, and list of NFL teams they have played
+for.
+EX:
+```sh
+$ ./nfl --player "Andy Dalton"
+DaltAn00	Andy Dalton	QB	TCU
+	2011 - Cincinnati Bengals
+	2012 - Cincinnati Bengals
+	2013 - Cincinnati Bengals
+	2014 - Cincinnati Bengals
+	2015 - Cincinnati Bengals
+	2016 - Cincinnati Bengals
+	2017 - Cincinnati Bengals
+	2018 - Cincinnati Bengals
+	2019 - Cincinnati Bengals
+```
+
+`--search <SEARCH_PARM>` - Prints a list of all players (id, name, position, college,
+and first NFL team) of any players who's name or college contains the search parameter.
+EX:
+```sh
+$ ./nfl --search "Cornell"
+BootKe20	Kevin Boothe	Cornell
+ArmsCo00	Cornell Armstrong	Southern Miss
+BrowCo20	Cornell Brown	Virginia Tech
+PaynSe20	Seth Payne	Cornell
+BurbCo00	Cornell Burbage	Kentucky
+CornJa00	Jack Cornell	Illinois
+LallBo20	Bob Lally	Cornell
+LarsPe00	Pete Larson	Cornell
+...
+```
+
+`--stats <PLAYER>` - Accepts a player argument as either player name or id, and 
+calculates and prints number of players at each degree of separation, as well as
+average separation.
+EX:
+```sh
+$ ./nfl --stats "DaltAn00"
+Network stats for Andy Dalton
+0 -- 1 cohort
+1 -- 214 cohorts
+2 -- 6628 cohorts
+3 -- 5958 cohorts
+4 -- 4724 cohorts
+5 -- 2777 cohorts
+6 -- 188 cohorts
+7 -- 0 cohorts
+8 -- 0 cohorts
+9 -- 0 cohorts
+Average separation 3.184627
+```
+
+`--distance <PLAYER> <PLAYER>` - Accepts two players as name or id and prints the 
+shortest connection between the two. The additional `-i <IGNROED_PLAYER>` option, 
+if provided, will exclude that player from consideration.
+**NOTE: Ignored players can not be either of the player argument to `--distance`.**
+```sh
+$ ./nfl --distance "Johnny Manziel" "Roger Staubach"
+Roger Staubach played for Dallas Cowboys in 1974 with Too Tall Jones
+Too Tall Jones played for Dallas Cowboys in 1989 with Troy Aikman
+Troy Aikman played for Dallas Cowboys in 1998 with Flozell Adams
+Flozell Adams played for Dallas Cowboys in 2006 with Miles Austin
+Miles Austin played for Cleveland Browns in 2014 with Johnny Manziel
+
+$ ./nfl --distance "Johnny Manziel" "Roger Staubach" -i "Troy Aikman"
+Roger Staubach played for Dallas Cowboys in 1979 with Doug Cosbie
+Doug Cosbie played for Dallas Cowboys in 1988 with Michael Irvin
+Michael Irvin played for Dallas Cowboys in 1998 with Flozell Adams
+Flozell Adams played for Dallas Cowboys in 2006 with Miles Austin
+Miles Austin played for Cleveland Browns in 2014 with Johnny Manziel
+```
+
+`--teams` - Prints a list of unique teams.
+```sh
+$ ./nfl --teams
+Arizona Cardinals
+Atlanta Falcons
+Baltimore Colts
+...
+```
+
+`--roster <TEAM_NAME> <TEAM_YEAR>` - Prints a roster of the the team specified by
+name and year.
+EX:
+```sh
+$ ./nfl --roster "Dallas Cowboys" 1970
+	AddeHe00	Herb Adderley	LCB	Michigan St.
+	AdkiMa00	Margene Adkins		Henderson JC
+	AndrGe00	George Andrie	RDE	Marquette
+	AsheBo20	Bob Asher	RT	Vanderbilt
+```
+
+`--oracle` - Will calculate stats for every player in the database, and print the
+player with the best and worst average separation.
+EX:
+```sh
+$ ./nfl --oracle
+And the winners are:
+The center of the universe (since 1960) with a score of 2.289849 is Morten Andersen
+The least connected NFL player with at least 100 connections of the NFL universe (since 1960) with a score of 4.207321 is Dewey Bohling
+```
+
+### Debug/Error Checking
+To build `nfl` with debug flags:
+```sh
+<project_root> $ make debug
+```
+to be able to debug with gdb.
+```sh
+<project_root> $ gdb --args ./nfl <OPTION> <ARG> [-f] <FILE> [-i] <PLAYER>
+```
+
+To check `nfl` against valgrind for memory leaks and errors, build with debug 
+flags and run with `valgrind` prepended.
+```sh
+<project_root> $ make debug
+<project_root> $ valgrind ./nfl <OPTION> <ARG> [-f] <FILE> [-i] <PLAYER>
+```
+
+## Performance/Optimization
+To be able to view performance information, build and execute with the following
+profiling flags:
+```sh 
+<project_root> $ make profile
+<project_root> $ ./nfl <OPTION> <ARG> [-f] <FILE> [-i] <PLAYER>
+```
+After the program has been run, use `gprof` to view graph profile.
+```sh
+<project_root> $ gprof nfl gmon.out > doc/analysis.txt
+```
+**NOTE: gprof will create gmon.out in the top level directory by default. However,
+this command redirects the report to text format in `doc/`**
+
+---
+
+### Testing
+Automated unit tests have been written for `nfl` and can be run using make.
+```sh
+<project_root> $ make check
+```
+will build and run automated unit testing.
+```sh
+100%: Checks: 14, Failures: 0, Errors: 0
+test/test_hashtable.c:20:P:hashtable:*curr++:0: Passed
+test/test_hashtable.c:26:P:hashtable:*curr++:0: Passed
+test/test_hashtable.c:38:P:hashtable:*curr++:0: Passed
+test/test_hashtable.c:51:P:hashtable:*curr++:0: Passed
+test/test_llist.c:21:P:llist:*curr++:0: Passed
+test/test_llist.c:29:P:llist:*curr++:0: Passed
+test/test_llist.c:37:P:llist:*curr++:0: Passed
+test/test_llist.c:45:P:llist:*curr++:0: Passed
+test/test_llist.c:59:P:llist:*curr++:0: Passed
+test/test_llist.c:73:P:llist:*curr++:0: Passed
+test/test_llist.c:85:P:llist:*curr++:0: Passed
+test/test_llist.c:89:P:llist:*curr++:0: Passed
+test/test_trie.c:9:P:trie:*curr++:0: Passed
+test/test_trie.c:18:P:trie:*curr++:0: Passed
+```
+Additional information about `nfl` testing can be found [here](./doc/testplan.pdf)
+
+---
+
+### Cleanup
+After running the program, execute:
+```sh
+<project_root> $ make clean
+```
+to delete object files as well as data created from `make profile`.
+
+---
 
 ## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Additional support can be found in the man page:
+```sh
+<project_root> $ man ./doc/nfl.1
+```
