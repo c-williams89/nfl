@@ -1,0 +1,79 @@
+echo -e "test_invalid_files":
+valgrind ./nfl -f /dev/null
+echo
+valgrind ./nfl -f /dev/urandom
+echo
+valgrind ./nfl -f /dev/zero
+echo
+valgrind ./nfl -f ./test/test_data/0_file
+echo
+echo -e test_player_valid:
+valgrind ./nfl --player "Andy Dalton" 
+echo
+valgrind ./nfl --player DaltAn00
+echo
+echo -e test_player_invalid:
+valgrind ./nfl --player "Dalton Andy"
+echo
+echo -e test_search_valid:
+valgrind ./nfl --search "Cornell"
+echo
+echo -e test_search_invalid:
+valgrind ./nfl --search "Jets"
+echo
+valgrind ./nfl --search "Jets" "and" "Cornell"
+echo
+echo -e test_stats_valid:
+valgrind ./nfl --stats "DixoRa20"
+echo
+valgrind ./nfl --stats "Randy Dixon"
+echo
+echo -e test_stats_invalid:
+valgrind ./nfl --stats "Dixon Randy"
+echo
+valgrind ./nfl --stats "Randy" "Dixon"
+echo
+echo test_roster_valid:
+valgrind ./nfl --roster "Dallas Cowboys" 1970
+echo
+echo test_roster_invalid:
+valgrind ./nfl --roster "Dallas Cowboys"
+echo
+valgrind ./nfl --roster "Dallas" "Cowboys" 1970
+echo
+valgrind ./nfl --roster 
+echo
+echo test_teams_valid:
+valgrind ./nfl --teams
+echo
+echo test_teams_invalid;
+valgrind ./nfl --teams "Dallas Cowboys"
+echo
+valgrind ./nfl --teams --stats "Randy Dixon"
+echo
+echo test_distance_valid:
+valgrind ./nfl --distance "Johnny Manziel" "Roger Staubach"
+echo
+valgrind ./nfl --distance "ManzJo00" "Roger Staubach"
+echo
+valgrind ./nfl --distance "Johnny Manziel" "StauRo00"
+echo
+valgrind ./nfl --distance "ManzJo00" "StauRo00"
+echo
+echo test_distance_invalid:
+valgrind ./nfl --distance "Johnny Manziel"
+echo
+valgrind ./nfl --distance "Johnny Manziel" "Roger Staubach" "Randy Dixon"
+echo
+valgrind ./nfl --distance "DNE"
+echo
+echo test_ignore:
+valgrind ./nfl --distance "Johnny Manziel" "Roger Staubach" -i "Too Tall Jones"
+echo
+valgrind ./nfl --distance "Johnny Manziel" "Roger Staubach" -i "Too Tall Jones" -i "Tom Rafferty"
+echo
+valgrind ./nfl --distance "Johnny Manziel" "Roger Staubach" -i "Johnny Manziel"
+echo
+valgrind ./nfl --distance "Johnny Manziel" "Roger Staubach" -i "Roger Staubach"
+echo
+valgrind ./nfl --distance "Johnny Manziel" "Roger Staubach" -i "DNE"

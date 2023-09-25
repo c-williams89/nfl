@@ -325,6 +325,7 @@ void player_distance(hash_t * player_table, char *start, char *end,
 
 	if (calc_distance(player1, player2)) {
 		print_distance(player2);
+		free(ignored);
 	}
 }
 

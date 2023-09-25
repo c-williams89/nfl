@@ -66,36 +66,41 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			if (my_opts->option) {
-				goto OPTION_EXIT;
+				goto FILE_EXIT;
 			}
 			my_opts->option = 'p';
 			my_opts->search_param1 = optarg;
 			break;
 		case 's':
 			if (my_opts->option) {
-				goto OPTION_EXIT;
+				goto FILE_EXIT;
 			}
 			my_opts->option = 's';
 			my_opts->search_param1 = optarg;
 			break;
 		case 'S':
+			if (my_opts->option) {
+				goto FILE_EXIT;
+			}
 			my_opts->option = 'S';
 			my_opts->search_param1 = optarg;
 			break;
 		case 'r':
 			if (my_opts->option) {
-				goto OPTION_EXIT;
+				goto FILE_EXIT;
 			}
 			my_opts->option = 'r';
 			my_opts->search_param1 = optarg;
 			if ((optind < argc) && (*argv[optind] != '-')) {
 				my_opts->search_param2 = argv[optind];
+			} else {
+				goto FILE_EXIT;
 			}
 			++optind;
 			break;
 		case 't':
 			if (my_opts->option) {
-				goto OPTION_EXIT;
+				goto FILE_EXIT;
 			}
 			my_opts->option = 't';
 			break;
@@ -104,6 +109,8 @@ int main(int argc, char **argv)
 			my_opts->search_param1 = optarg;
 			if ((optind < argc) && (*argv[optind] != '-')) {
 				my_opts->search_param2 = argv[optind];
+			} else {
+				goto FILE_EXIT;
 			}
 			++optind;
 			break;
@@ -116,7 +123,7 @@ int main(int argc, char **argv)
 			break;
 		case 'o':
 			if (my_opts->option) {
-				goto OPTION_EXIT;
+				goto FILE_EXIT;
 			}
 			my_opts->option = 'o';
 			break;
@@ -147,6 +154,7 @@ int main(int argc, char **argv)
 			break;
 		}
 	}
+	
 	if (my_opts->ignored && (my_opts->option != 'd')) {
 		fprintf(stderr, "--ignore: missing --distance option\n");
 		llist_destroy(my_opts->ignored);
