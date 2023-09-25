@@ -243,7 +243,7 @@ void print_roster(hash_t * team_table, char *key)
 
 	while (!llist_is_empty(team->roster)) {
 		player_t *player = (player_t *) llist_dequeue(team->roster);
-		printf("\t%s\t%s\t%s\t%s\n", player->id, player->name,
+		printf("\t%s\t%-20s\t%-5s\t%-20s\n", player->id, player->name,
 		       player->position, player->college);
 	}
 }
