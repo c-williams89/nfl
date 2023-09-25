@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -26,6 +27,9 @@ typedef struct hash_t {
 	uint32_t max_cap;
 	uint32_t curr_size;
 } hash_t;
+
+static void hash_table_resize(hash_t * table);
+static bool reinsert(hash_t * table, entry_t * entry);
 
 hash_t *hash_table_create(uint32_t size, hash_f hf)
 {
@@ -90,7 +94,7 @@ int hash_table_insert(hash_t * ht, char *key, void *data)
 	}
 
 	if (ht->curr_size >= LOAD(ht->max_cap)) {
-		// TODO: RESIZE
+		hash_table_resize(ht);
 	}
 
 	entry_t *entry = create_entry(data, key);
@@ -281,4 +285,39 @@ uint32_t hashtable_get_size(hash_t * table)
 		return 0;
 	}
 	return table->curr_size;
+}
+
+
+static void hash_table_resize(hash_t * table)
+{
+	int next_size = table->max_cap * 2;
+	entry_t **tmp = reallocarray(table->entries, next_size, PTR_SIZE);
+	if (!tmp) {
+		perror("table reallocation\n");
+		errno = 0;
+		return;
+	}
+	memset(tmp + table->max_cap, 0, (table->max_cap * PTR_SIZE));
+	table->entries = tmp;
+	table->max_cap *= 2;
+	for (int i = 0; i < (table->max_cap / 2); ++i) {
+		if (table->entries[i]) {
+			reinsert(table, table->entries[i]);
+			table->entries[i] = NULL;
+		}
+	}
+
+}
+
+static bool reinsert(hash_t * table, entry_t * entry)
+{
+	uint32_t index = (table->hash_function(entry->data) % table->max_cap);
+	for (int i = 0; i < table->max_cap; ++i) {
+		int try = (i + index) % table->max_cap;
+		if (!table->entries[try] || table->entries[try]->b_to_delete) {
+			table->entries[try] = entry;
+			return true;
+		}
+	}
+	return false;
 }
